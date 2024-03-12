@@ -5,7 +5,6 @@ import { View, Text, StyleSheet } from 'react-native';
 const EventCard = ({ eventName, date, location }) => {
     return (
         <View style={styles.card}>
-            <image source={require('../assets/EventCard.png')} />
             <Text style={styles.eventName}>{eventName}</Text>
             <Text>Date: {date}</Text>
             <Text>Location: {location}</Text>
