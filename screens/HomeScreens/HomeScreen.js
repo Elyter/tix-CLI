@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import EventCard from './EventCard';
+import SearchBar from './SearchBar';
 
 import { COLORS } from '../../assets/colors';
 
@@ -15,13 +16,14 @@ const HomeScreen = () => {
         { id: 6, eventName: 'Event 6', date: '2024-04-10', location: 'Venue 6' },
         { id: 7, eventName: 'Event 7', date: '2024-04-15', location: 'Venue 7' },
         { id: 8, eventName: 'Event 8', date: '2024-04-16', location: 'Venue 8' },
-        
         // Add more events as needed
     ]);
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Welcome to the Home Screen!</Text>
+            <View style={styles.header}>
+                <SearchBar />
+            </View>
             <FlatList
                 data={events}
                 keyExtractor={(item) => item.id.toString()}
@@ -42,9 +44,15 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: COLORS.lightblack
+        backgroundColor: COLORS.lightblack,
+        
+
+    },
+    header: {
+        backgroundColor: '#000', // noir
+        paddingVertical: 20, // Déplacer un peu plus bas
+        paddingHorizontal: 20,
+
     },
     title: {
         fontSize: 24,
