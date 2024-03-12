@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import EventCard from './EventCard';
 
+import { COLORS } from '../../assets/colors';
+
 const HomeScreen = () => {
     const [events, setEvents] = useState([
         { id: 1, eventName: 'Event 1', date: '2024-03-15', location: 'Venue 1' },
@@ -42,11 +44,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: COLORS.lightblack
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 16,
+        color: "#FFF"
     },
 });
 
