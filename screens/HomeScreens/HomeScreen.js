@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
+import { COLORS } from '../../assets/colors';
+
 const HomeScreen = () => {
     return (
         <View style={styles.container}>
@@ -15,11 +17,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: COLORS.lightblack
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 16,
+        color: "#FFF"
     },
 });
 

@@ -1,16 +1,16 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { Feather } from '@expo/vector-icons';
-
+import { Entypo, FontAwesome, FontAwesome6 } from '@expo/vector-icons';
 
 import HomeNav from './navigators/HomeNav';
 import ResearchNav from './navigators/ResearchNav';
-import TicketsNav from './navigators/TicketsNav';
+import TicketsNav from './navigators/TicketsNav.js';
 import FavoritesNav from './navigators/FavoritesNav';
 import AccountNav from './navigators/AccountNav';
+
+import { COLORS } from './assets/colors.js'; 
 
 const Tab = createBottomTabNavigator();
 
@@ -19,8 +19,14 @@ export default function App() {
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={{
-          tabBarActiveTintColor: '#FF9800',
-          tabBarInactiveTintColor: '#757575',
+          tabBarActiveTintColor: COLORS.orange,
+          tabBarInactiveTintColor: COLORS.grey,
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            backgroundColor: COLORS.darkblack,
+            borderTopWidth: 0.5,
+            borderTopColor: "rgba(255, 255, 255, 0.1)",
+          },
         }}
       >
         <Tab.Screen
@@ -28,8 +34,8 @@ export default function App() {
           component={HomeNav}
           options={{
             headerShown: false,
-            tabBarIcon: () => (
-              <Feather name="home" size={24} color="black" />
+            tabBarIcon: ({size, color}) => (
+              <Entypo name="home" size={size} color={color} />
             ),
           }}
         />
@@ -38,6 +44,9 @@ export default function App() {
           component={ResearchNav}
           options={{
             headerShown: false,
+            tabBarIcon: ({size, color}) => (
+              <FontAwesome name="search" size={size} color={color} />
+            ),
           }}
         />
         <Tab.Screen
@@ -45,6 +54,9 @@ export default function App() {
           component={TicketsNav}
           options={{
             headerShown: false,
+            tabBarIcon: ({size, color}) => (
+              <FontAwesome6 name="ticket" size={size} color={color} />
+            ),
           }}
         />
         <Tab.Screen
@@ -52,6 +64,9 @@ export default function App() {
           component={FavoritesNav}
           options={{
             headerShown: false,
+            tabBarIcon: ({size, color}) => (
+              <FontAwesome name="heart" size={size} color={color} />
+            ),
           }}
         />
         <Tab.Screen
@@ -59,6 +74,9 @@ export default function App() {
           component={AccountNav}
           options={{
             headerShown: false,
+            tabBarIcon: ({size, color}) => (
+              <FontAwesome name="user" size={size} color={color} />
+            ),
           }}
         />
       </Tab.Navigator>
