@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Switch, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, Switch, TouchableOpacity, Button } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 
 import { COLORS } from '../../assets/colors';
 
-const AccountScreen = () => {
+const AccountScreen = ({navigation}) => {
     const [isEnabled, setIsEnabled] = React.useState(false);
 
     return (
@@ -58,6 +58,9 @@ const AccountScreen = () => {
                     </TouchableOpacity>
                 </View>
             </View>
+            <Button title='Debug Login' onPress={
+                navigation.navigate('Login')
+            }/>
         </View>
     );
 };
