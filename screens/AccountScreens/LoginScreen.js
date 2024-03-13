@@ -83,7 +83,7 @@ const LoginScreen = ({ navigation }) => {
                 <View style={{marginBottom: 10}}>
                     <Button title="SE CONNECTER" onPress={handlePress}/>
                 </View>
-                {loading && <ActivityIndicator size="large" color={COLORS.primary} />}
+                {loading && <ActivityIndicator size="large" />}
                 <TouchableOpacity>
                     <Text style={{color: 'white', marginBottom: 10}}>Mot de passe oublié ?</Text>
                 </TouchableOpacity>

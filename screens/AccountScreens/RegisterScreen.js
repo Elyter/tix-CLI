@@ -11,6 +11,7 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 const RegisterScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const isFocused = useIsFocused();
 
@@ -42,6 +43,7 @@ const RegisterScreen = ({navigation}) => {
     //   };
 
     const handleRegister = () => {
+        setLoading(true);
         const auth = getAuth();
         createUserWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
@@ -58,6 +60,7 @@ const RegisterScreen = ({navigation}) => {
             });
           })
           .catch((error) => {
+            setLoading(false);
             const errorCode = error.code;
             if (errorCode === 'auth/email-already-in-use') {
               console.log('Email déjà utilisé');
@@ -93,6 +96,7 @@ const RegisterScreen = ({navigation}) => {
                     autoCapitalize='none'
                 />
                 <Button title="Créer un compte" onPress={handleRegister} />
+                {loading && <ActivityIndicator size="large" />}
                 <TouchableOpacity onPress={() => navigation.navigate("Login")}>
                     <Text style={{color: 'white', marginTop: 10}}>déjà un compte ? Connectez vous</Text>
                 </TouchableOpacity>
