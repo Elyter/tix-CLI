@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, StyleSheet, TouchableOpacity, Text, TouchableNativeFeedback } from 'react-native';
+import { View, TextInput, StyleSheet, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import Button from '../../components/Button';
 import { COLORS } from '../../assets/colors';
 import { getAuth, signInWithEmailAndPassword, } from "firebase/auth";
@@ -10,6 +10,7 @@ const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const isFocused = useIsFocused();
 
@@ -28,6 +29,7 @@ const LoginScreen = ({ navigation }) => {
     }, [isFocused])
     
     const handlePress = () => {
+        setLoading(true);
         const auth = getAuth();
         signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
@@ -43,6 +45,7 @@ const LoginScreen = ({ navigation }) => {
             });
         })
         .catch((error) => {
+            setLoading(false);
             const errorCode = error.code;
             if(errorCode === 'auth/invalid-email') {
                 setError('Email invalide');
@@ -80,6 +83,7 @@ const LoginScreen = ({ navigation }) => {
                 <View style={{marginBottom: 10}}>
                     <Button title="SE CONNECTER" onPress={handlePress}/>
                 </View>
+                {loading && <ActivityIndicator size="large" color={COLORS.primary} />}
                 <TouchableOpacity>
                     <Text style={{color: 'white', marginBottom: 10}}>Mot de passe oublié ?</Text>
                 </TouchableOpacity>
