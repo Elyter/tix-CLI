@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { getAuth, createUserWithEmailAndPassword, signInWithCredential } from "firebase/auth";
 import firebase from "firebase/app";
 import { COLORS } from '../../assets/colors';
@@ -8,7 +8,7 @@ import { useIsFocused } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
-const RegisterScreen = () => {
+const RegisterScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -18,7 +18,6 @@ const RegisterScreen = () => {
         const getData = async () => {
             try {
               const value = await AsyncStorage.getItem('userData');
-              console.log(value);
               if(value !== null) {
                 navigation.navigate("Account");
               }
@@ -29,18 +28,18 @@ const RegisterScreen = () => {
         getData();
     }, [isFocused])
 
-    const signUpWithApple = async () => {
-        try {
-          const { identityToken, nonce } = await AppleAuthentication.signInAsync({
-            requestedScopes: [AppleAuthentication.AppleAuthenticationScope.FULL_NAME, AppleAuthentication.AppleAuthenticationScope.EMAIL],
-          });
+    // const signUpWithApple = async () => {
+    //     try {
+    //       const { identityToken, nonce } = await AppleAuthentication.signInAsync({
+    //         requestedScopes: [AppleAuthentication.AppleAuthenticationScope.FULL_NAME, AppleAuthentication.AppleAuthenticationScope.EMAIL],
+    //       });
       
-          const credential = firebase.auth.AppleAuthProvider.credential(identityToken, nonce);
-          await firebase.auth().createUserWithCredential(credential);
-        } catch (error) {
-          console.log(error);
-        }
-      };
+    //       const credential = firebase.auth.AppleAuthProvider.credential(identityToken, nonce);
+    //       await firebase.auth().createUserWithCredential(credential);
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    //   };
 
     const handleRegister = () => {
         const auth = getAuth();
@@ -78,23 +77,33 @@ const RegisterScreen = () => {
                     value={email}
                     onChangeText={(text) => setEmail(text)}
                     style={styles.input}
+                    autoComplete="email"
+                    autoCorrect={false}
+                    autoCapitalize='none'
+                    keyboardType='email-address'
                 />
                 <TextInput
-                    placeholder="Password"
+                    placeholder="Mot de passe"
                     secureTextEntry
                     value={password}
                     onChangeText={(text) => setPassword(text)}
                     style={styles.input}
+                    autoComplete="new-password"
+                    autoCorrect={false}
+                    autoCapitalize='none'
                 />
-                <Button title="Register" onPress={handleRegister} />
-                <View style={{ width: 200, height: 5, backgroundColor: 'lightgrey', borderRadius: 50, marginBottom: 40, marginTop: 25}}/>
+                <Button title="Créer un compte" onPress={handleRegister} />
+                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                    <Text style={{color: 'white', marginTop: 10}}>déjà un compte ? Connectez vous</Text>
+                </TouchableOpacity>
+                {/* <View style={{ width: 200, height: 5, backgroundColor: 'lightgrey', borderRadius: 50, marginBottom: 40, marginTop: 25}}/>
                 <AppleAuthentication.AppleAuthenticationButton
                     buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_UP}
                     buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
                     cornerRadius={5}
                     style={styles.apple}
                     onPress={signUpWithApple}
-                />
+                /> */}
             </View>
         </View>
     );

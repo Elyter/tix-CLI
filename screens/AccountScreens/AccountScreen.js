@@ -8,6 +8,7 @@ import { COLORS } from '../../assets/colors';
 
 const AccountScreen = ({navigation}) => {
     const [isEnabled, setIsEnabled] = React.useState(false);
+    const [userData, setUserData] = React.useState({});
 
     const isFocused = useIsFocused();
 
@@ -18,6 +19,8 @@ const AccountScreen = ({navigation}) => {
               console.log(value);
               if(value === null) {
                 navigation.replace("Login");
+              } else {
+                setUserData(JSON.parse(value));
               }
             } catch(e) {
               // error reading value
@@ -29,7 +32,6 @@ const AccountScreen = ({navigation}) => {
     const handleDisconnect = () => {
         AsyncStorage.removeItem('userData')
         .then(() => {
-            console.log('User data removed successfully');
             navigation.navigate('Login');
         })
         .catch((error) => {
@@ -92,7 +94,6 @@ const AccountScreen = ({navigation}) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <Button title='Debug Login' onPress={() => navigation.navigate("Login")}/>
         </View>
     );
 };
