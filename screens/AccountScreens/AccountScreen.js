@@ -1,11 +1,41 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { View, Text, StyleSheet, Image, Switch, TouchableOpacity, Button } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused } from '@react-navigation/native';
 
 import { COLORS } from '../../assets/colors';
 
 const AccountScreen = ({navigation}) => {
     const [isEnabled, setIsEnabled] = React.useState(false);
+
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+        const getData = async () => {
+            try {
+              const value = await AsyncStorage.getItem('userData');
+              console.log(value);
+              if(value === null) {
+                navigation.replace("Login");
+              }
+            } catch(e) {
+              // error reading value
+            }
+        }
+        getData();
+    }, [isFocused])
+
+    const handleDisconnect = () => {
+        AsyncStorage.removeItem('userData')
+        .then(() => {
+            console.log('User data removed successfully');
+            navigation.navigate('Login');
+        })
+        .catch((error) => {
+            console.error('Error removing user data:', error);
+        });
+    }
 
     return (
         <View style={styles.container}>
@@ -56,11 +86,13 @@ const AccountScreen = ({navigation}) => {
                         <Text style={styles.paramText}>Paramètres du compte</Text>
                         <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
                     </TouchableOpacity>
+                    <TouchableOpacity style={styles.param} onPress={handleDisconnect}>
+                        <Text style={styles.paramText}>Deconnexion</Text>
+                        <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
+                    </TouchableOpacity>
                 </View>
             </View>
-            <Button title='Debug Login' onPress={
-                navigation.navigate('Login')
-            }/>
+            <Button title='Debug Login' onPress={() => navigation.navigate("Login")}/>
         </View>
     );
 };
