@@ -31,10 +31,10 @@ const AccountScreen = () => {
                 </View>
                 <View style={styles.settings}>
                     <View style={{height: 1, width: "100%", position: "absolute", backgroundColor: COLORS.grey, marginTop: 15}}/>
-                    <Text style={{fontSize: 24, fontWeight: 'bold', color: "#FFF", marginTop: 30, marginBottom: 15, borderTopWidth: 1, borderTopColor: COLORS.grey, marginLeft: 10}}>Paramètres</Text>
+                    <Text style={{fontSize: 24, fontWeight: 'bold', color: COLORS.white, marginTop: 30, marginBottom: 15, borderTopWidth: 1, borderTopColor: COLORS.grey, marginLeft: 10}}>Paramètres</Text>
                     <View style={styles.param}>
                         <Text style={styles.paramText}>Ville principal</Text>
-                        <Text style={{color: "#2B57F2", marginRight: 5}}>Paris</Text>
+                        <Text style={{color: COLORS.blue, marginRight: 5}}>Paris</Text>
                     </View>
                     <View style={styles.param}>
                         <Text style={styles.paramText}>Copier les évènements dans le calendrier</Text>
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: "#FFF",
+        color: COLORS.white,
         marginRight: 10
     },
     info: {
@@ -100,12 +100,12 @@ const styles = StyleSheet.create({
     number: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: "#FFF"
+        color: COLORS.white
     },
     statName: {
         marginTop: 10,
         fontSize: 18,
-        color: "#2B57F2"
+        color: COLORS.blue
     },
     settings: {
         flexDirection: "column",
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
         paddingRight: 5,
     },
     paramText: {
-        color: "#FFF",
+        color: COLORS.white,
         flex: 1,
         paddingTop: 20,
         paddingBottom: 20,
