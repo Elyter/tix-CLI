@@ -21,7 +21,7 @@ const OrganizersComponent = ({ organizer, isFollowing, onFollowToggle }) => {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        backgroundColor: COLORS.white,
+        backgroundColor: COLORS.lightblack,
         padding: 10,
         marginVertical: 5,
         shadowColor: COLORS.darkblack,
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: COLORS.darkblack,
+        color: COLORS.white,
     },
     followButton: {
         paddingHorizontal: 15,
