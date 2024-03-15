@@ -24,11 +24,10 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.white,
         padding: 10,
         marginVertical: 5,
-        borderRadius: 5,
         shadowColor: COLORS.darkblack,
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: 4,
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
@@ -37,7 +36,7 @@ const styles = StyleSheet.create({
     profileImage: {
         width: 60,
         height: 60,
-        borderRadius: 25,
+        borderRadius: 40,
         marginRight: 10,
     },
     infoContainer: {
@@ -49,6 +48,7 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 18,
         fontWeight: 'bold',
+        color: COLORS.darkblack,
     },
     followButton: {
         paddingHorizontal: 15,
