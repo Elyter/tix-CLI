@@ -7,7 +7,7 @@ const EventCard = ({ eventName, date, location }) => {
     return (
         <View style={styles.card}>
             <Image
-                source={require('../../assets/EventImage.jpg')} // Remplace le chemin par le chemin réel de ton image
+                source={require('../../assets/EventImage.jpg')} //             
                 style={styles.eventImage} // Ajoute un style pour l'image si nécessaire
             />
             <View style={styles.content}>
