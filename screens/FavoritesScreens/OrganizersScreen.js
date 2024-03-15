@@ -17,10 +17,10 @@ const organizersData = [
         profilePicture: require('../../assets/images/salim.jpg'),
         isFollowing: true,
     },
-    { 
+    {
         id: 3,
-        name: 'djidji',
-        profilePicture: require('../../assets/images/djidji.jpg'),
+        name: 'elyter',
+        profilePicture: require('../../assets/images/elyter.jpg'),
         isFollowing: false,
     },
 
