@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, TextInput, StyleSheet, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { getAuth, createUserWithEmailAndPassword, signInWithCredential } from "firebase/auth";
 import firebase from "firebase/app";
 import { COLORS } from '../../assets/colors';
@@ -12,6 +12,7 @@ const RegisterScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const isFocused = useIsFocused();
 
@@ -63,11 +64,17 @@ const RegisterScreen = ({navigation}) => {
             setLoading(false);
             const errorCode = error.code;
             if (errorCode === 'auth/email-already-in-use') {
-              console.log('Email déjà utilisé');
+                setError('Email déjà utilisé');
             } else if (errorCode === 'auth/invalid-email') {
-                console.log('Email invalide');
-            } else if (errorCode === 'auth/weak-password') {
-                console.log('Mot de passe trop faible (6 caractères minimum)');
+                setError('Email invalide');
+            } else if (errorCode === 'auth/invalid-password') {
+                setError('Mot de passe trop faible (6 caractères minimum)');
+            } else if (errorCode === 'auth/internal-error'){
+                setError('Erreur interne, veuillez réessayer');
+                console.error(error);
+            } else {
+                setError("Erreur inconnue");
+                console.error(error);
             }
           });
     };
@@ -100,6 +107,7 @@ const RegisterScreen = ({navigation}) => {
                 <TouchableOpacity onPress={() => navigation.navigate("Login")}>
                     <Text style={{color: 'white', marginTop: 10}}>déjà un compte ? Connectez vous</Text>
                 </TouchableOpacity>
+                <Text style={{color: 'red', marginTop: 10}}>{error}</Text>
                 {/* <View style={{ width: 200, height: 5, backgroundColor: 'lightgrey', borderRadius: 50, marginBottom: 40, marginTop: 25}}/>
                 <AppleAuthentication.AppleAuthenticationButton
                     buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_UP}
