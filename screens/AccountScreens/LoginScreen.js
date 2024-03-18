@@ -47,12 +47,16 @@ const LoginScreen = ({ navigation }) => {
         .catch((error) => {
             setLoading(false);
             const errorCode = error.code;
-            if(errorCode === 'auth/invalid-email') {
-                setError('Email invalide');
-            } else if(errorCode === 'auth/user-not-found') {
-                setError('Email ou mot de passe incorrect');
-            } else if(errorCode === 'auth/wrong-password') {
-                setError('Email ou mot de passe incorrect');
+            if(errorCode === 'auth/internal-error'){
+                setError('Erreur interne, veuillez réessayer');
+                console.error(error);
+            } else if(errorCode === 'auth/invalid-argument' || errorCode === 'auth/invalid-email' || errorCode === 'auth/user-not-found' || errorCode === 'auth/invalid-credential' || errorCode === 'auth/invalid-password') {
+                setError('Email ou mot de passe invalide');
+            } else if(errorCode === 'auth/too-many-requests	') {
+                setError('Trop de tentatives, veuillez réessayer plus tard');
+            } else {
+                setError("Erreur inconnue");
+                console.error(error);
             }
         });
     }
