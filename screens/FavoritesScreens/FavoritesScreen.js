@@ -19,6 +19,7 @@ const FavoritesScreen = () => {
                         width: 150,
                  },
 
+
                 }}
                 tabBarOptions={{
                     style: { backgroundColor: COLORS.darkblack }, // Fond noir

@@ -1,18 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { COLORS } from '../../assets/colors';
+import { View, Text, StyleSheet, Image } from 'react-native';
+import { COLORS } from '../assets/colors';
+import FollowButton from './FollowButton'; // Importez le composant FollowButton
+
 const OrganizersComponent = ({ organizer, isFollowing, onFollowToggle }) => {
     return (
         <View style={styles.container}>
             <Image source={organizer.profilePicture } style={styles.profileImage} />
             <View style={styles.infoContainer}>
                 <Text style={styles.name}>{organizer.name}</Text>
-                <TouchableOpacity
-                    style={[styles.followButton, { backgroundColor: isFollowing ? COLORS.grey : COLORS.blue }]}
-                    onPress={onFollowToggle}
-                >
-                    <Text style={styles.followButtonText}>{isFollowing ? 'Abonné(e)' : 'S\'abonner'}</Text>
-                </TouchableOpacity>
+                <FollowButton isFollowing={isFollowing} onPress={onFollowToggle} />
             </View>
         </View>
     );
@@ -27,7 +24,7 @@ const styles = StyleSheet.create({
         shadowColor: COLORS.darkblack,
         shadowOffset: {
             width: 0,
-            height: 4,
+            height: 2,
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
@@ -49,15 +46,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: COLORS.white,
-    },
-    followButton: {
-        paddingHorizontal: 15,
-        paddingVertical: 5,
-        borderRadius: 20,
-    },
-    followButtonText: {
-        color: COLORS.white,
-        fontWeight: 'bold',
     },
 });
 

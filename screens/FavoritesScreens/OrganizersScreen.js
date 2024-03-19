@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { COLORS } from '../../assets/colors';
-import OrganizersComponent from './OrganizersComponent';
+import OrganizersComponent from '../../components/OrganizersComponent';
 
 // Exemple de données d'organisateurs
 const organizersData = [

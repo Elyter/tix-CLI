@@ -1,7 +1,7 @@
 // SearchBar.js
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
-import { COLORS } from '../../assets/colors';
+import { COLORS } from '../assets/colors';
 
 const SearchBar = () => {
     const [searchText, setSearchText] = useState('');
@@ -16,7 +16,7 @@ const SearchBar = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Search..."
-                placeholderTextColor="#757575"
+                placeholderTextColor={COLORS.grey}
                 value={searchText}
                 onChangeText={handleSearch}
             />
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end', // aligner à droite
         width: '70%', // prendre 70% de la largeur
         borderWidth: 1, // Ajouter une bordure
-        borderColor: "#757575", // Couleur de la bordure gris clair
+        borderColor: COLORS.grey, // Couleur de la bordure gris clair
     },
     input: {
         color: 'white', // blanc
