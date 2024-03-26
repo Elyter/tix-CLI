@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { COLORS } from '../assets/colors';
+import HeartButton from './HeartButton'; // Importez le composant HeartButton
 
 const EventCard = ({ eventName, date, location, eventImage, price, organizer }) => {
     return (
@@ -15,6 +16,9 @@ const EventCard = ({ eventName, date, location, eventImage, price, organizer }) 
                 <Text style={styles.date}>{date}</Text>
                 <Text style={styles.location}>{location}</Text>
                 <Text style={styles.price}>{price}</Text>
+                <View style={styles.buttonContainer}>
+                    <HeartButton isLiked={false} onPress={() => console.log('Like pressed')} />
+                </View>
             </View>
         </View>
     );
@@ -38,7 +42,6 @@ const styles = StyleSheet.create({
     container: {
         minHeight: 300, // Définissez une hauteur minimale pour la carte
     },
-
     eventImage: {
         width: '100%',
         height: 210,
@@ -75,6 +78,17 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: 'bold',
         marginBottom: 8,
+    },
+    buttonContainer: {
+        position: 'absolute',
+        bottom: 85,
+        right: 0,
+        backgroundColor: COLORS.darkblack,
+        padding: 9,
+        borderRadius: 100,
+        marginRight: 16,
+        marginBottom: 16,
+
     },
 });
 
