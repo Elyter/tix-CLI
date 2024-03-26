@@ -107,9 +107,9 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     title: {
-        fontSize: 24,
+        fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 16,
+        marginBottom: 8,
         marginHorizontal: 16,
         color: COLORS.white,
 
