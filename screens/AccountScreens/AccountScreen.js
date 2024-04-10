@@ -92,6 +92,10 @@ const AccountScreen = ({navigation}) => {
                         <Text style={styles.paramText}>Deconnexion</Text>
                         <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
                     </TouchableOpacity>
+                    <TouchableOpacity style={styles.param} onPress={() => navigation.navigate("OrganizerNav")}>
+                        <Text style={styles.paramText}>Passer au mode organisteur</Text>
+                        <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>

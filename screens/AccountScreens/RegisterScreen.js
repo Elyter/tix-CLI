@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { getAuth, createUserWithEmailAndPassword, signInWithCredential } from "firebase/auth";
 import firebase from "firebase/app";
@@ -7,12 +7,20 @@ import Button from '../../components/Button';
 import { useIsFocused } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as AppleAuthentication from 'expo-apple-authentication';
+import axios from 'axios';
+import { API_URL } from '@env';
 
 const RegisterScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [name, setName] = useState('');
+    const [surname, setSurname] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const surnameInputRef = useRef(null);
+    const emailInputRef = useRef(null);
+    const passwordInputRef = useRef(null);
+    const nameInputRef = useRef(null);
 
     const isFocused = useIsFocused();
 
@@ -43,6 +51,19 @@ const RegisterScreen = ({navigation}) => {
     //     }
     //   };
 
+    const handleNameSubmit = () => {
+        surnameInputRef.current.focus();
+    };
+
+    const handleSurnameSubmit = () => {
+        emailInputRef.current.focus();
+    };
+
+    const handleEmailSubmit = () => {
+        passwordInputRef.current.focus();
+    };
+
+
     const handleRegister = () => {
         setLoading(true);
         const auth = getAuth();
@@ -50,17 +71,32 @@ const RegisterScreen = ({navigation}) => {
           .then((userCredential) => {
             // Signed up 
             const user = userCredential.user;
-            // Store user data in AsyncStorage
-            AsyncStorage.setItem('userData', JSON.stringify(user))
-            .then(() => {
-                console.log('User data stored successfully');
-                // Navigate to next screen or do any other action
+            axios.post(API_URL, {
+                firstName: name,
+                lastName: surname,
+                uid: user.uid
+            })
+            .then((response) => {
+                if (response.status !== 200) {
+                    setError(response.data.error);
+                    setLoading(false);
+                    return;
+                } else {
+                    setError('');
+                    AsyncStorage.setItem('userData', JSON.stringify(user))
+                    .then(() => {
+                        navigation.navigate("Account");
+                    })
+                    .catch((error) => {
+                        console.error('Error storing user data:', error);
+                    });
+                }
             })
             .catch((error) => {
-                console.error('Error storing user data:', error);
-            });
-          })
-          .catch((error) => {
+                console.log(error);
+                console.error('Error storing user data in database:', error);
+            })
+          }).catch((error) => {
             setLoading(false);
             const errorCode = error.code;
             if (errorCode === 'auth/email-already-in-use') {
@@ -82,7 +118,42 @@ const RegisterScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
             <View style={styles.form}>
+                <TextInput 
+                    ref={surnameInputRef}
+                    placeholder="Prénom"
+                    value={surname}
+                    onChangeText={(value) => {
+                        value.length - surname.length > 1
+                        ? (nameInputRef.current?.focus(),
+                          setSurname(value))
+                        : setSurname(value)
+                    }}
+                    style={styles.input}
+                    autoComplete="given-name"
+                    autoCorrect={false}
+                    autoCapitalize='words'
+                    onSubmitEditing={handleNameSubmit}
+                    enterKeyHint='next'
+                />
                 <TextInput
+                    ref={nameInputRef}
+                    placeholder="Nom"
+                    value={name}
+                    onChangeText={(value) => {
+                        value.length - name.length > 1
+                        ? (emailInputRef.current?.focus(),
+                          setName(value))
+                        : setName(value)
+                    }}
+                    style={styles.input}
+                    autoComplete="family-name"
+                    autoCorrect={false}
+                    autoCapitalize='words'
+                    onSubmitEditing={handleSurnameSubmit}
+                    enterKeyHint='next'
+                />
+                <TextInput
+                    ref={emailInputRef}
                     placeholder="Email"
                     value={email}
                     onChangeText={(text) => setEmail(text)}
@@ -91,8 +162,11 @@ const RegisterScreen = ({navigation}) => {
                     autoCorrect={false}
                     autoCapitalize='none'
                     keyboardType='email-address'
+                    onSubmitEditing={handleEmailSubmit}
+                    enterKeyHint='next'
                 />
                 <TextInput
+                    ref={passwordInputRef}
                     placeholder="Mot de passe"
                     secureTextEntry
                     value={password}
@@ -101,6 +175,8 @@ const RegisterScreen = ({navigation}) => {
                     autoComplete="new-password"
                     autoCorrect={false}
                     autoCapitalize='none'
+                    onSubmitEditing={handleRegister}
+                    enterKeyHint='done'
                 />
                 <Button title="Créer un compte" onPress={handleRegister} />
                 {loading && <ActivityIndicator size="large" />}
@@ -124,11 +200,9 @@ const RegisterScreen = ({navigation}) => {
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: 50,
         flex: 1,
         alignItems: 'center',
         backgroundColor: COLORS.lightblack,
-        paddingTop: 50,
     },
     title: {
         fontSize: 24,
