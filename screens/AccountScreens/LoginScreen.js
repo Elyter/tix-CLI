@@ -36,7 +36,7 @@ const LoginScreen = ({ navigation }) => {
             // Signed in 
             const user = userCredential.user;
             // Store user data in AsyncStorage
-            AsyncStorage.setItem('userData', JSON.stringify(user))
+            AsyncStorage.setItem('userData', JSON.stringify(user.uid))
             .then(() => {
                 navigation.replace('Account');
             })

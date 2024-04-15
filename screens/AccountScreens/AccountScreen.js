@@ -5,14 +5,53 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
 import { API_URL } from '@env';
 import axios from 'axios';
+import { Dropdown } from 'react-native-element-dropdown';
 
 import { COLORS } from '../../assets/colors';
+
+const data = [
+    { label: 'Paris', value: 'Paris' },
+    { label: 'Marseille', value: 'Marseille' },
+    { label: 'Lyon', value: 'Lyon' },
+    { label: 'Toulouse', value: 'Toulouse' },
+    { label: 'Nice', value: 'Nice' },
+    { label: 'Nantes', value: 'Nantes' },
+    { label: 'Montpellier', value: 'Montpellier' },
+    { label: 'Strasbourg', value: 'Strasbourg' },
+    { label: 'Bordeaux', value: 'Bordeaux' },
+    { label: 'Lille', value: 'Lille' },
+];
+
+
 
 const AccountScreen = ({navigation}) => {
     const [isEnabled, setIsEnabled] = React.useState(false);
     const [userData, setUserData] = React.useState({});
+    const [value, setValue] = React.useState(data[0].value);
 
     const isFocused = useIsFocused();
+
+    const changeValue = item => {
+        setValue(item);
+        axios.put(API_URL + '/userData/' + userData.uid, {
+            city: item,
+        })
+        .catch((error) => {
+            console.error('Error updating user data:', error);
+        });
+    }
+
+    const renderItem = item => {
+        return (
+          <View style={styles.item}>
+            <Text style={styles.textItem}>{item ? item.label : ""}</Text>
+            {item && item.value === value && (
+                <Feather name="check" size={20} color={COLORS.blue} />
+            )}
+          </View>
+        );
+      };
+          
 
     useEffect(() => {
         const getData = async () => {
@@ -25,6 +64,7 @@ const AccountScreen = ({navigation}) => {
                 axios.get(url)
                 .then((response) => {
                     setUserData(response.data);
+                    setValue(response.data.city);
                     console.log(response.data);
                 })
                 .catch((error) => {
@@ -75,7 +115,16 @@ const AccountScreen = ({navigation}) => {
                     <Text style={{fontSize: 24, fontWeight: 'bold', color: COLORS.white, marginTop: 30, marginBottom: 15, borderTopWidth: 1, borderTopColor: COLORS.grey, marginLeft: 10}}>Paramètres</Text>
                     <View style={styles.param}>
                         <Text style={styles.paramText}>Ville principal</Text>
-                        <Text style={{color: COLORS.blue, marginRight: 5}}>Paris</Text>
+                        <Text style={{color: COLORS.blue, marginRight: 50}}>{value}</Text>
+                        <Dropdown
+                            style={styles.dropdown}
+                            data={data}
+                            maxHeight={300}
+                            onChange={item => {
+                                changeValue(item.value);
+                            }}
+                            renderItem={renderItem}
+                        />
                     </View>
                     <View style={styles.param}>
                         <Text style={styles.paramText}>Copier les évènements dans le calendrier</Text>
@@ -175,7 +224,31 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 20,
         paddingBottom: 20,
-    }
+    },
+    dropdown: {
+        width: 200,
+        position: 'absolute',
+        right: 0,
+        margin: 16,
+        height: 50,
+        padding: 12,
+        elevation: 2,
+      },
+      icon: {
+        marginRight: 5,
+      },
+      item: {
+        padding: 17,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: COLORS.lightblack,
+      },
+      textItem: {
+        flex: 1,
+        fontSize: 16,
+        color: COLORS.blue,
+      },
 });
 
 
