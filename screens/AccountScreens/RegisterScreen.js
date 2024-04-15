@@ -15,12 +15,14 @@ const RegisterScreen = ({navigation}) => {
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
+    const [username, setUsername] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const surnameInputRef = useRef(null);
     const emailInputRef = useRef(null);
     const passwordInputRef = useRef(null);
     const nameInputRef = useRef(null);
+    const usernameInputRef = useRef(null);
 
     const isFocused = useIsFocused();
 
@@ -66,15 +68,21 @@ const RegisterScreen = ({navigation}) => {
 
     const handleRegister = () => {
         setLoading(true);
+        if (email === '' || password === '' || name === '' || surname === '' || username === '') {
+            setError('Veuillez remplir tous les champs');
+            setLoading(false);
+            return;
+        }
         const auth = getAuth();
         createUserWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
             // Signed up 
             const user = userCredential.user;
-            axios.post(API_URL, {
+            axios.post(API_URL + "/register", {
                 firstName: name,
                 lastName: surname,
-                uid: user.uid
+                uid: user.uid,
+                username: username,
             })
             .then((response) => {
                 if (response.status !== 200) {
@@ -94,7 +102,8 @@ const RegisterScreen = ({navigation}) => {
             })
             .catch((error) => {
                 console.log(error);
-                console.error('Error storing user data in database:', error);
+                console.error('Error storing user data in database:', error.message);
+                setError('Erreur interne, veuillez réessayer');
             })
           }).catch((error) => {
             setLoading(false);
@@ -118,6 +127,18 @@ const RegisterScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
             <View style={styles.form}>
+                <TextInput
+                    placeholder='Pseudo'
+                    style={styles.input}
+                    autoComplete="username"
+                    autoCorrect={false}
+                    autoCapitalize='none'
+                    onSubmitEditing={handleNameSubmit}
+                    enterKeyHint='next'
+                    ref={usernameInputRef}
+                    value={username}
+                    onChangeText={(value) => setUsername(value)}
+                />
                 <TextInput 
                     ref={surnameInputRef}
                     placeholder="Prénom"
