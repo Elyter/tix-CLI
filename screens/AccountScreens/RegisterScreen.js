@@ -91,7 +91,7 @@ const RegisterScreen = ({navigation}) => {
                     return;
                 } else {
                     setError('');
-                    AsyncStorage.setItem('userData', JSON.stringify(user))
+                    AsyncStorage.setItem('userData', JSON.stringify(user.uid))
                     .then(() => {
                         navigation.navigate("Account");
                     })

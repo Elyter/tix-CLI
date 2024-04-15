@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, Image, Switch, TouchableOpacity, Button } from 
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
+import { API_URL } from '@env';
+import axios from 'axios';
 
 import { COLORS } from '../../assets/colors';
 
@@ -16,11 +18,18 @@ const AccountScreen = ({navigation}) => {
         const getData = async () => {
             try {
               const value = await AsyncStorage.getItem('userData');
-              console.log(value);
               if(value === null) {
                 navigation.replace("Login");
               } else {
-                setUserData(JSON.parse(value));
+                const url = API_URL + '/userData/' + value.replace(/"/g, '')
+                axios.get(url)
+                .then((response) => {
+                    setUserData(response.data);
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    console.error('Error getting user data:', error);
+                });
               }
             } catch(e) {
               // error reading value
@@ -44,7 +53,7 @@ const AccountScreen = ({navigation}) => {
             <View style={styles.info}>
                 <Feather name="user" size={75} color="white" />
                 <View style={styles.name}>
-                    <Text style={styles.title}>Jean Dupont</Text>
+                    <Text style={styles.title}>{userData.firstName} {userData.lastName}</Text>
                     <Feather name="edit-2" size={18} color="#2B57F2" />
                 </View>
                 <View style={styles.stats}>
