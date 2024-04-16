@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { COLORS } from '../assets/colors';
 import HeartButton from './HeartButton'; // Importez le composant HeartButton
 
 const EventCard = ({ eventName, date, location, eventImage, price, organizer }) => {
     return (
-        <View style={[styles.card, styles.container]}>
+        <TouchableOpacity style={[styles.card, styles.container]}>
             <Image
                 source={eventImage}
                 style={styles.eventImage}
@@ -20,7 +20,7 @@ const EventCard = ({ eventName, date, location, eventImage, price, organizer }) 
                     <HeartButton isLiked={false} onPress={() => console.log('Like pressed')} />
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 
