@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native'; // Importez ScrollView
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'; // Importez ScrollView
 import EventCard from '../../components/EventCard';
 import SearchBar from '../../components/SearchBar';
 import OrganizerCard from '../../components/OrganizerCard'; // Importez le composant OrganizerCard
@@ -9,7 +9,7 @@ import { API_URL } from '@env';
 
 import { COLORS } from '../../assets/colors';
 
-const HomeScreen = () => { 
+const HomeScreen = ({navigation}) => { 
     const isFocused = useIsFocused();
     const [loading, setLoading] = useState(true);
     const [events, setEvents] = useState([]);
@@ -74,21 +74,25 @@ const HomeScreen = () => {
             </View>
             
             {/* Section: Événements populaires autour de vous */}
-            {!loading && (
+            {loading ? (
+                    <ActivityIndicator size="large" color={COLORS.orange} />
+                ) : (
                 <View style={styles.section}>
                     <Text style={styles.title}>Événements populaires autour de vous</Text>
                     <FlatList
                         data={events}
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({ item }) => (
-                            <EventCard
-                                eventName={item.name}
-                                date={item.date}
-                                location={item.location}
-                                imageUrl={item.imageUrl}
-                                price={item.price}
-                                organizer={item.idOrganizer}
-                            />
+                            <TouchableOpacity onPress={() => navigation.navigate('EventDetails', { id: item.id })}>
+                                <EventCard
+                                    eventName={item.name}
+                                    date={item.date}
+                                    location={item.location}
+                                    imageUrl={item.imageUrl}
+                                    price={item.price}
+                                    organizer={item.idOrganizer}
+                                />
+                            </TouchableOpacity>
                         )}
                         showsVerticalScrollIndicator={false}
                         style={{ width: '100%' }}
