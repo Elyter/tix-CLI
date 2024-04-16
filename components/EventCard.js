@@ -1,21 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { COLORS } from '../assets/colors';
 import HeartButton from './HeartButton'; // Importez le composant HeartButton
+import axios from 'axios';
+import { API_URL } from '@env';
+import { Buffer } from "buffer";
 
-const EventCard = ({ eventName, date, location, eventImage, price, organizer }) => {
+const EventCard = ({ eventName, date, location, imageUrl, price, organizer }) => {
+    const [imageData, setImageData] = useState(null);
+
+    useEffect(() => {
+        const fetchImage = async () => {
+            try {
+                const response = await axios.get(API_URL + imageUrl, { responseType: 'arraybuffer' });
+                setImageData(response.data);
+            } catch (error) {
+                console.error('Erreur lors du chargement de l\'image:', error);
+            }
+        };
+
+        fetchImage();
+    }, []);
+
     return (
         <View style={[styles.card, styles.container]}>
-            <Image
-                source={eventImage}
-                style={styles.eventImage}
-            />
+            {imageData && (
+                <Image
+                    source={{ uri: `data:image/jpeg;base64,${Buffer.from(imageData, 'binary').toString('base64')}` }}
+                    style={styles.eventImage}
+                />
+            )}
             <View style={styles.content}>
                 <Text style={styles.eventName}>{eventName}</Text>
                 <Text style={styles.organizer}>{organizer}</Text>
                 <Text style={styles.date}>{date}</Text>
                 <Text style={styles.location}>{location}</Text>
-                <Text style={styles.price}>{price}</Text>
+                <Text style={styles.price}>{price} €</Text>
                 <View style={styles.buttonContainer}>
                     <HeartButton isLiked={false} onPress={() => console.log('Like pressed')} />
                 </View>
@@ -88,7 +108,6 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         marginRight: 16,
         marginBottom: 16,
-
     },
 });
 
