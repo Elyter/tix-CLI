@@ -6,8 +6,10 @@ import { AntDesign, Entypo, Feather, Fontisto } from '@expo/vector-icons';
 import HeartButton from '../../components/HeartButton';
 import { Buffer } from "buffer";
 import { useIsFocused } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { COLORS } from '../../assets/colors';
+import { set, update } from 'firebase/database';
 
 const EventDetails = ({route, navigation}) => {
     const { id } = route.params;
@@ -15,26 +17,79 @@ const EventDetails = ({route, navigation}) => {
     const [imageData, setImageData] = useState(null);
     const isFocused = useIsFocused();
     const [loading, setLoading] = useState(true);
+    const [userData, setUserData] = useState({});
+    const [liked, setLiked] = useState(false);
+
+    const likeUpdate = () => {
+        axios.post(API_URL + '/likes/' + userData.uid, {
+            eventId: id,
+        })
+        .then((response) => {
+            if (response.data.message === "like enregistré") {
+                setLiked(true)
+            } else {
+                setLiked(false);
+            }
+            console.log('Like added:', response.data);
+        })
+        .catch((error) => {
+            console.error('Error adding like:', error);
+        });
+    };
 
     useEffect(() => {
         setLoading(true);
-        const url = API_URL + '/events/' + id;
-        axios.get(url)
-        .then((response) => {
-            setEvent(response.data);
-            axios.get(API_URL + response.data.imageUrl, { responseType: 'arraybuffer' })
-            .then((response) => {
-                setImageData(response.data);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error('Error getting image data:', error);
-            });
-        })
-        .catch((error) => {
-            console.error('Error getting event data:', error);
-        });
+        const getData = async () => {
+            try {
+                const value = await AsyncStorage.getItem('userData');
+                const url = API_URL + '/userData/' + value.replace(/"/g, '')
+                axios.get(url)
+                .then((response) => {
+                    setUserData(response.data);
+                    console.log('User data:', response.data);
+    
+                    // Récupération des likes une fois que les données utilisateur sont disponibles
+                    const likesUrl = API_URL + '/likes/' + response.data.uid;
+                    console.log('Likes url:', likesUrl);
+                    axios.get(likesUrl)
+                    .then((likesResponse) => {
+                        likesResponse.data.forEach(element => {
+                            if (element.eventId === id) {
+                                setLiked(true);
+                            }
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Error getting likes data:', error);
+                    });
+    
+                    const eventUrl = API_URL + '/events/' + id;
+                    axios.get(eventUrl)
+                    .then((eventResponse) => {
+                        setEvent(eventResponse.data);
+                        axios.get(API_URL + eventResponse.data.imageUrl, { responseType: 'arraybuffer' })
+                        .then((imageResponse) => {
+                            setImageData(imageResponse.data);
+                            setLoading(false);
+                        })
+                        .catch((error) => {
+                            console.error('Error getting image data:', error);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Error getting event data:', error);
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error getting user data:', error);
+                });
+            } catch(e) {
+                console.error('Error reading value:', e);
+            }
+        }
+        getData();
     }, [isFocused]);
+    
     
     const onShare = async () => {
         try {
@@ -55,13 +110,16 @@ const EventDetails = ({route, navigation}) => {
                 animated={true}
                 barStyle="light-content"
             />
+            {loading ? (
+                <ActivityIndicator size="large" color={COLORS.orange} />
+            ) : (
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <AntDesign name="left" size={27} color={COLORS.orange}  style={{marginTop: 60, marginBottom: 15 }}/>
                 </TouchableOpacity>
                 <View style={{display: "flex", flexDirection: "row"}}>
                     <View style={styles.buttonContainer}>
-                        <HeartButton isLiked={false} size={27} onPress={() => console.log('Like pressed')} />
+                        <HeartButton isLiked={liked} size={27} onPress={() => likeUpdate()} />
                     </View>
                     <TouchableOpacity onPress={onShare}>
                         <Entypo name="share-alternative" size={27} color={COLORS.orange}  style={{marginTop: 57, marginBottom: 10, marginRight: 17 }}/>
@@ -69,6 +127,7 @@ const EventDetails = ({route, navigation}) => {
                     <Feather name="more-vertical" size={27} color={COLORS.orange}  style={{marginTop: 60, marginBottom: 10 }} />
                 </View>
             </View>
+            )}
             <ScrollView style={styles.info}>
                 {loading ? (
                     <ActivityIndicator size="large" color={COLORS.orange} />
@@ -87,13 +146,14 @@ const EventDetails = ({route, navigation}) => {
                         </View>
                         <Text style={styles.title}>{event.name}</Text>
                         <Text>{event.idOrganizer}</Text>
+                        <Text style={{color: COLORS.white, fontSize: 16, marginTop: 10}}>{event.description}</Text>
                         <View style={styles.dateContainer}>
                             <Fontisto name="date" size={30} color={COLORS.orange} />
                             <Text style={{color: COLORS.white, fontSize: 20, fontWeight: 'bold', marginLeft: 30, marginTop: 3}}>{event.date}</Text>     
                         </View>
                         <View style={styles.dateContainer}>
                             <Entypo name="location-pin" size={30} color={COLORS.orange} />
-                            <Text style={{color: COLORS.white, fontSize: 20, fontWeight: 'bold', marginLeft: 30, marginTop: 3}}>{event.location}</Text>
+                            <Text style={{color: COLORS.white, fontSize: 20, fontWeight: 'bold', marginLeft: 30, marginTop: 3, marginBottom: 20}}>{event.location}</Text>
                         </View>
                     </View>
                 )}
@@ -161,14 +221,15 @@ const styles = StyleSheet.create({
     },
     dateContainer: {
         flexDirection: 'row',
-        marginTop: 10,
+        marginTop: 30,
         marginBottom: 10,
     },
     ticketContainer: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        marginBottom: 30
+        marginBottom: 30,
+        marginTop: 15,
     },    
 });
 
