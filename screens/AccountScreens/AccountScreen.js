@@ -6,7 +6,6 @@ import { useIsFocused } from '@react-navigation/native';
 import { API_URL } from '@env';
 import axios from 'axios';
 import { Dropdown } from 'react-native-element-dropdown';
-
 import { COLORS } from '../../assets/colors';
 
 const data = [

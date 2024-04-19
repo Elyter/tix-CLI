@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Toast from 'react-native-toast-message'; // Importation du module Toast
 import { Entypo } from '@expo/vector-icons'; // Importation de l'icône Entypo
 import { COLORS } from '../../assets/colors';
 
@@ -75,12 +74,7 @@ const EventForm = () => {
     setAnswers(['', '', '', '', '', '', '', '']);
     setCurrentQuestionIndex(0);
     // Affichez un message de succès ou naviguez vers une autre vue
-    Toast.show({
-      type: 'success',
-      text1: 'Événement ajouté avec succès !',
-      visibilityTime: 3000, // 3 secondes
-    
-    })
+    toast
   };
 
   // Calcul du pourcentage d'avancement
