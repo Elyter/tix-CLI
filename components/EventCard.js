@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { COLORS } from '../assets/colors';
 import HeartButton from './HeartButton'; // Importez le composant HeartButton
 import axios from 'axios';
@@ -23,13 +23,11 @@ const EventCard = ({ eventName, date, location, imageUrl, price, organizer }) =>
     }, []);
 
     return (
-        <View style={[styles.card, styles.container]}>
-            {imageData && (
-                <Image
-                    source={{ uri: `data:image/jpeg;base64,${Buffer.from(imageData, 'binary').toString('base64')}` }}
-                    style={styles.eventImage}
-                />
-            )}
+        <TouchableOpacity style={[styles.card, styles.container]}>
+            <Image
+                source={eventImage}
+                style={styles.eventImage}
+            />
             <View style={styles.content}>
                 <Text style={styles.eventName}>{eventName}</Text>
                 <Text style={styles.organizer}>{organizer}</Text>
@@ -40,7 +38,7 @@ const EventCard = ({ eventName, date, location, imageUrl, price, organizer }) =>
                     <HeartButton isLiked={false} onPress={() => console.log('Like pressed')} />
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 
