@@ -39,6 +39,7 @@ const OrganizerNav = ({ navigation }) => {
             tabBarIcon: ({size, color}) => (
               <AntDesign name="pluscircleo" size={24} color={color} />
             ),
+            headerShown: false,
 
           }}
       />

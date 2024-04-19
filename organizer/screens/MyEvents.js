@@ -80,12 +80,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLORS.lightblack,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: COLORS.white,
-    marginBottom: 20,
-  },
   header: {
     backgroundColor: COLORS.darkblack,
     paddingHorizontal: 20,
