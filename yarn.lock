@@ -6384,6 +6384,14 @@ react-native-element-dropdown@^2.10.4:
   dependencies:
     lodash "^4.17.21"
 
+react-native-flash-message@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.npmjs.org/react-native-flash-message/-/react-native-flash-message-0.4.2.tgz"
+  integrity sha512-YvdXRW9AGMTI99S3DJZhLO0mbk/ehKv/UQf4/Df+3dtGi8DlkidRbyqCQZk1WMtZ7rN85PMTGr/xEI9CF9z0YA==
+  dependencies:
+    prop-types "^15.8.1"
+    react-native-iphone-screen-helper "^2.0.2"
+
 "react-native-gesture-handler@>= 1.0.0", react-native-gesture-handler@~2.14.0:
   version "2.14.1"
   resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.14.1.tgz"
@@ -6394,6 +6402,11 @@ react-native-element-dropdown@^2.10.4:
     invariant "^2.2.4"
     lodash "^4.17.21"
     prop-types "^15.7.2"
+
+react-native-iphone-screen-helper@^2.0.2:
+  version "2.1.1"
+  resolved "https://registry.npmjs.org/react-native-iphone-screen-helper/-/react-native-iphone-screen-helper-2.1.1.tgz"
+  integrity sha512-geuw/bli83+tOg8UpoioLk1H1aEy0wnMDusWkCazsyH6fSk6qzmgaZ2cRyyJRU8s2tG87HctZFKGTkyYzcUcfA==
 
 react-native-pager-view@*, "react-native-pager-view@>= 4.0.0", react-native-pager-view@6.2.3:
   version "6.2.3"
@@ -6433,7 +6446,7 @@ react-native-vector-icons@^10.0.3:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@0.73.4:
+react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@>=0.42.0, react-native@0.73.4:
   version "0.73.4"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.73.4.tgz"
   integrity sha512-VtS+Yr6OOTIuJGDECIYWzNU8QpJjASQYvMtfa/Hvm/2/h5GdB6W9H9TOmh13x07Lj4AOhNMx3XSsz6TdrO4jIg==
