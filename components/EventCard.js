@@ -35,7 +35,7 @@ const EventCard = ({ eventName, date, location, imageUrl, price, organizer }) =>
                 <Text style={styles.location}>{location}</Text>
                 <Text style={styles.price}>{price} €</Text>
                 <View style={styles.buttonContainer}>
-                    <HeartButton isLiked={false} onPress={() => console.log('Like pressed')} />
+                    <HeartButton isLiked={false} size={20} onPress={() => console.log('Like pressed')} />
                 </View>
             </View>
         </TouchableOpacity>
