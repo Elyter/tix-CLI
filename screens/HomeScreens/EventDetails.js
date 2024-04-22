@@ -7,10 +7,8 @@ import HeartButton from '../../components/HeartButton';
 import { Buffer } from "buffer";
 import { useIsFocused } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useToast } from "react-native-toast-notifications";
 
 import { COLORS } from '../../assets/colors';
-import { set, update } from 'firebase/database';
 
 const EventDetails = ({route, navigation}) => {
     const { id } = route.params;
@@ -20,7 +18,6 @@ const EventDetails = ({route, navigation}) => {
     const [loading, setLoading] = useState(true);
     const [userData, setUserData] = useState({});
     const [liked, setLiked] = useState(false);
-    const toast = useToast();
 
     const likeUpdate = () => {
         axios.post(API_URL + '/likes/' + userData.uid, {
@@ -29,12 +26,8 @@ const EventDetails = ({route, navigation}) => {
         .then((response) => {
             if (response.data.message === "like enregistré") {
                 setLiked(true)
-                toast.hideAll();
-                toast.show("Événement ajouté aux favoris");
             } else {
                 setLiked(false);
-                toast.hideAll();
-                toast.show("Événement retiré des favoris");
             }
             console.log('Like added:', response.data);
         })
