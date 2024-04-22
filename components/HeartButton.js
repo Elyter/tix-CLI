@@ -3,7 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { COLORS } from '../assets/colors';
 
-const HeartButton = ({ onPress, isLiked }) => {
+const HeartButton = ({ onPress, isLiked, size }) => {
     const [liked, setLiked] = useState(isLiked);
 
     const toggleLike = () => {
@@ -13,7 +13,7 @@ const HeartButton = ({ onPress, isLiked }) => {
 
     return (
         <TouchableOpacity onPress={toggleLike}>
-            <Icon name={liked ? 'heart' : 'heart-o'} size={20 } color={liked ? COLORS.orange : COLORS.white} />
+            <Icon name={liked ? 'heart' : 'heart-o'} size={size } color={liked ? COLORS.orange : COLORS.white} />
         </TouchableOpacity>
     );
 };
