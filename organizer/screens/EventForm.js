@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Modal } from 'react-native';
 import { Entypo } from '@expo/vector-icons'; // Importation de l'icône Entypo
+import { AntDesign } from '@expo/vector-icons'; // Importation de l'icône AntDesign
 import DateTimePicker from '@react-native-community/datetimepicker';
 import ToastBar from '../component/Toastbar';
 import { COLORS } from '../../assets/colors';
@@ -30,9 +31,18 @@ const EventForm = () => {
   const CustomHeader = ({ title }) => {
     return (
       <View style={styles.header}>
+        <TouchableOpacity onPress={handleBackButton}>
+          <AntDesign name="left" size={27} color={COLORS.orange} />
+        </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
       </View>
     );
+  };
+
+  const handleBackButton = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
   };
 
   const handleAnswer = (text) => {
@@ -158,6 +168,7 @@ const EventForm = () => {
             />
           )}
         </View>
+  
         {currentQuestionIndex < questions.length - 1 ? (
           <TouchableOpacity style={styles.button} onPress={handleNextQuestion}>
             <Text style={styles.buttonText}>Question suivante</Text>
@@ -184,11 +195,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 50,
     paddingBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: COLORS.orange,
+    marginLeft: 60,
   },
   progressBar: {
     height: 5,

@@ -51,7 +51,9 @@ const OrganizerNav = ({ navigation }) => {
             tabBarIcon: ({size, color}) => (
               <FontAwesome name="user" size={size} color={color} />
             ),
+            headerShown: false,
           }}
+
       /> 
     </Tab.Navigator>
   );
