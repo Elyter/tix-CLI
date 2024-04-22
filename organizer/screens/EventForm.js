@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Modal, Image } from 'react-native';
 import { Entypo } from '@expo/vector-icons'; // Importation de l'icône Entypo
 import { AntDesign } from '@expo/vector-icons'; // Importation de l'icône AntDesign
 import DateTimePicker from '@react-native-community/datetimepicker';
 import ToastBar from '../component/Toastbar';
 import { COLORS } from '../../assets/colors';
 import { useNavigation } from '@react-navigation/native'; // Importation de useNavigation
+import * as ImagePicker from 'expo-image-picker';
 
 const EventForm = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -15,6 +16,7 @@ const EventForm = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [showDatePickerModal, setShowDatePickerModal] = useState(false); // Déplacer le hook useState ici
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const navigation = useNavigation(); // Obtenir l'objet de navigation
 
@@ -99,6 +101,20 @@ const EventForm = () => {
     navigation.navigate('MyEvents');
   };
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setSelectedImage(result.uri);
+      handleAnswer(result.uri);
+    }
+  };
+
   // Calcul du pourcentage d'avancement
   const progressPercentage = (currentQuestionIndex + 1) / questions.length * 100;
 
@@ -139,6 +155,13 @@ const EventForm = () => {
                 </TouchableWithoutFeedback>
               </Modal>
             </>
+          ) : currentQuestionIndex === questions.length-2 ? (
+            <>
+              <TouchableOpacity style={styles.input} onPress={pickImage}>
+                <Text style={styles.datePickerText}>Choisir une image</Text>
+              </TouchableOpacity>
+              {selectedImage && <Image source={{ uri: selectedImage }} style={{ width: 200, height: 200 }} />}
+            </>
           ) : currentQuestionIndex === 3 ? (
             <View style={styles.numericInput}>
               <TouchableOpacity style={styles.phaseButton} onPress={decrementPhases}>
@@ -149,14 +172,13 @@ const EventForm = () => {
                 <Entypo name="plus" size={24} color="black" /> 
               </TouchableOpacity>
             </View>
-          ) : currentQuestionIndex >= 4 && currentQuestionIndex < questions.length - 2 ? (
+          ) : currentQuestionIndex >= 5 && currentQuestionIndex < questions.length - 1 ? (
             <TextInput
               style={[styles.input, answers[currentQuestionIndex] === '' ? styles.emptyInput : null]}
               value={answers[currentQuestionIndex]}
               onChangeText={handleAnswer}
-              placeholder="0 €"
+              placeholder="Réponse"
               placeholderTextColor={COLORS.grey}
-              keyboardType="numeric"
             />
           ) : (
             <TextInput
