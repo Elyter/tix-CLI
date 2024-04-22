@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Toast from 'react-native-toast-message'; // Importation du module Toast
 import { Entypo } from '@expo/vector-icons'; // Importation de l'icône Entypo
 import { COLORS } from '../../assets/colors';
 

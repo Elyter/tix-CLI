@@ -7,6 +7,7 @@ import HeartButton from '../../components/HeartButton';
 import { Buffer } from "buffer";
 import { useIsFocused } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useToast } from "react-native-toast-notifications";
 
 import { COLORS } from '../../assets/colors';
 import { set, update } from 'firebase/database';
@@ -19,6 +20,7 @@ const EventDetails = ({route, navigation}) => {
     const [loading, setLoading] = useState(true);
     const [userData, setUserData] = useState({});
     const [liked, setLiked] = useState(false);
+    const toast = useToast();
 
     const likeUpdate = () => {
         axios.post(API_URL + '/likes/' + userData.uid, {
@@ -27,8 +29,12 @@ const EventDetails = ({route, navigation}) => {
         .then((response) => {
             if (response.data.message === "like enregistré") {
                 setLiked(true)
+                toast.hideAll();
+                toast.show("Événement ajouté aux favoris");
             } else {
                 setLiked(false);
+                toast.hideAll();
+                toast.show("Événement retiré des favoris");
             }
             console.log('Like added:', response.data);
         })
@@ -45,12 +51,8 @@ const EventDetails = ({route, navigation}) => {
                 const url = API_URL + '/userData/' + value.replace(/"/g, '')
                 axios.get(url)
                 .then((response) => {
-                    setUserData(response.data);
-                    console.log('User data:', response.data);
-    
-                    // Récupération des likes une fois que les données utilisateur sont disponibles
+                    setUserData(response.data);    
                     const likesUrl = API_URL + '/likes/' + response.data.uid;
-                    console.log('Likes url:', likesUrl);
                     axios.get(likesUrl)
                     .then((likesResponse) => {
                         likesResponse.data.forEach(element => {
@@ -60,7 +62,9 @@ const EventDetails = ({route, navigation}) => {
                         });
                     })
                     .catch((error) => {
-                        console.error('Error getting likes data:', error);
+                        if (error.response.status !== 404) {
+                            console.error('Error getting likes data:', error);
+                        }
                     });
     
                     const eventUrl = API_URL + '/events/' + id;
