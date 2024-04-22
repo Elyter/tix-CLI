@@ -10,7 +10,6 @@ import { View, Text, StyleSheet } from 'react-native';
 const Tab = createMaterialTopTabNavigator();
 
 const FavoritesScreen = () => {
-    const [loading, setLoading] = React.useState(false);
 
     return (
         <NavigationContainer independent={true}>
