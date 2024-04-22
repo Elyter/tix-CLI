@@ -1,15 +1,69 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { COLORS } from '../assets/colors';
 import HeartButton from './HeartButton'; // Importez le composant HeartButton
 import axios from 'axios';
 import { API_URL } from '@env';
 import { Buffer } from "buffer";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const EventCard = ({ eventName, date, location, imageUrl, price, organizer }) => {
+const EventCard = ({ id, eventName, date, location, imageUrl, price, organizer }) => {
     const [imageData, setImageData] = useState(null);
+    const [liked, setLiked] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [userData, setUserData] = useState();
+
+    const likeUpdate = () => {
+        axios.post(API_URL + '/likes/' + userData.uid, {
+            eventId: id,
+        })
+        .then((response) => {
+            if (response.data.message === "like enregistré") {
+                setLiked(true)
+            } else {
+                setLiked(false);
+            }
+            console.log('Like added:', response.data);
+        })
+        .catch((error) => {
+            console.error('Error adding like:', error);
+        });
+    };
 
     useEffect(() => {
+        setLoading(true);
+        const getData = async () => {
+            try {
+                const value = await AsyncStorage.getItem('userData');
+                setUserData(value)
+                const url = API_URL + '/userData/' + value.replace(/"/g, '')
+                axios.get(url)
+                .then((response) => {
+                    setUserData(response.data);
+                    const likesUrl = API_URL + '/likes/' + response.data.uid;
+                    axios.get(likesUrl)
+                    .then((likesResponse) => {
+                        likesResponse.data.forEach(element => {
+                            if (element.eventId === id) {
+                                setLiked(true);
+                            }
+                        });
+                        setLoading(false);
+                    })
+                    .catch((error) => {
+                        if (error.response.status === 404) {
+                            setLoading(false);
+                        }
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error getting user data:', error);
+                });
+            } catch (error) {
+                console.error('Error getting async storage:', error);
+            }
+        }
+        getData();
         const fetchImage = async () => {
             try {
                 console.log('Chargement de l\'image:', API_URL + imageUrl)
@@ -25,22 +79,26 @@ const EventCard = ({ eventName, date, location, imageUrl, price, organizer }) =>
 
     return (
         <View style={[styles.card, styles.container]}>
-            {imageData && (
-                <Image
-                    source={{ uri: `data:image/jpeg;base64,${Buffer.from(imageData, 'binary').toString('base64')}` }}
-                    style={styles.eventImage}
-                />
+            {loading ? (
+                <ActivityIndicator size="large" color={COLORS.orange} />
+            ) : (
+                <>
+                    <Image
+                        source={{ uri: `data:image/jpeg;base64,${Buffer.from(imageData, 'binary').toString('base64')}` }}
+                        style={styles.eventImage}
+                    />
+                    <View style={styles.content}>
+                        <Text style={styles.eventName}>{eventName}</Text>
+                        <Text style={styles.organizer}>{organizer}</Text>
+                        <Text style={styles.date}>{date}</Text>
+                        <Text style={styles.location}>{location}</Text>
+                        <Text style={styles.price}>{price} €</Text>
+                        <View style={styles.buttonContainer}>
+                            <HeartButton isLiked={liked} size={20} onPress={() => likeUpdate()} />
+                        </View>
+                    </View>
+                </>
             )}
-            <View style={styles.content}>
-                <Text style={styles.eventName}>{eventName}</Text>
-                <Text style={styles.organizer}>{organizer}</Text>
-                <Text style={styles.date}>{date}</Text>
-                <Text style={styles.location}>{location}</Text>
-                <Text style={styles.price}>{price} €</Text>
-                <View style={styles.buttonContainer}>
-                    <HeartButton isLiked={false} size={20} onPress={() => console.log('Like pressed')} />
-                </View>
-            </View>
         </View>
     );
 };

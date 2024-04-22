@@ -9,7 +9,6 @@ import { useIsFocused } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { COLORS } from '../../assets/colors';
-import { set, update } from 'firebase/database';
 
 const EventDetails = ({route, navigation}) => {
     const { id } = route.params;
@@ -45,12 +44,8 @@ const EventDetails = ({route, navigation}) => {
                 const url = API_URL + '/userData/' + value.replace(/"/g, '')
                 axios.get(url)
                 .then((response) => {
-                    setUserData(response.data);
-                    console.log('User data:', response.data);
-    
-                    // Récupération des likes une fois que les données utilisateur sont disponibles
+                    setUserData(response.data);    
                     const likesUrl = API_URL + '/likes/' + response.data.uid;
-                    console.log('Likes url:', likesUrl);
                     axios.get(likesUrl)
                     .then((likesResponse) => {
                         likesResponse.data.forEach(element => {
@@ -60,7 +55,9 @@ const EventDetails = ({route, navigation}) => {
                         });
                     })
                     .catch((error) => {
-                        console.error('Error getting likes data:', error);
+                        if (error.response.status !== 404) {
+                            console.error('Error getting likes data:', error);
+                        }
                     });
     
                     const eventUrl = API_URL + '/events/' + id;

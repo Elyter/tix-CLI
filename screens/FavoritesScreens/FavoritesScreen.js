@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { COLORS } from '../../assets/colors';
@@ -10,6 +10,8 @@ import { View, Text, StyleSheet } from 'react-native';
 const Tab = createMaterialTopTabNavigator();
 
 const FavoritesScreen = () => {
+    const [loading, setLoading] = React.useState(false);
+
     return (
         <NavigationContainer independent={true}>
             <Tab.Navigator

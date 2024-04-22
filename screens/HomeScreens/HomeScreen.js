@@ -52,7 +52,6 @@ const HomeScreen = ({navigation}) => {
             <View style={styles.header}>
                 <SearchBar />
             </View>
-            
             {/* Section: Organisateurs à suivre */}
             <View style={styles.section}>
                 <Text style={styles.title}>Organisateurs à suivre</Text>
@@ -85,6 +84,7 @@ const HomeScreen = ({navigation}) => {
                         renderItem={({ item }) => (
                             <TouchableOpacity onPress={() => navigation.navigate('EventDetails', { id: item.id })}>
                                 <EventCard
+                                    id={item.id}
                                     eventName={item.name}
                                     date={item.date}
                                     location={item.location}
