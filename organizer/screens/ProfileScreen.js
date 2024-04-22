@@ -1,46 +1,254 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, {useEffect} from 'react';
+import { View, Text, StyleSheet, Image, Switch, TouchableOpacity, Button } from 'react-native';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused } from '@react-navigation/native';
+import { API_URL } from '@env';
+import axios from 'axios';
+import { Dropdown } from 'react-native-element-dropdown';
+import { COLORS } from '../../assets/colors';
 
-const ProfileScreen = () => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
-      <View style={styles.profileInfo}>
-        <Text>Name: John Doe</Text>
-        <Text>Email: johndoe@example.com</Text>
-        <Text>Age: 30</Text>
-        <Text>Location: New York</Text>
-      </View>
-    </View>
-  );
+const data = [
+    { label: 'Paris', value: 'Paris' },
+    { label: 'Marseille', value: 'Marseille' },
+    { label: 'Lyon', value: 'Lyon' },
+    { label: 'Toulouse', value: 'Toulouse' },
+    { label: 'Nice', value: 'Nice' },
+    { label: 'Nantes', value: 'Nantes' },
+    { label: 'Montpellier', value: 'Montpellier' },
+    { label: 'Strasbourg', value: 'Strasbourg' },
+    { label: 'Bordeaux', value: 'Bordeaux' },
+    { label: 'Lille', value: 'Lille' },
+];
+
+
+
+const AccountScreen = ({navigation}) => {
+    const [isEnabled, setIsEnabled] = React.useState(false);
+    const [userData, setUserData] = React.useState({});
+    const [value, setValue] = React.useState(data[0].value);
+
+    const isFocused = useIsFocused();
+
+    const changeValue = item => {
+        setValue(item);
+        axios.put(API_URL + '/userData/' + userData.uid, {
+            city: item,
+        })
+        .catch((error) => {
+            console.error('Error updating user data:', error);
+        });
+    }
+
+    const renderItem = item => {
+        return (
+          <View style={styles.item}>
+            <Text style={styles.textItem}>{item ? item.label : ""}</Text>
+            {item && item.value === value && (
+                <Feather name="check" size={20} color={COLORS.blue} />
+            )}
+          </View>
+        );
+      };
+          
+
+    useEffect(() => {
+        const getData = async () => {
+            try {
+              const value = await AsyncStorage.getItem('userData');
+              if(value === null) {
+                navigation.replace("Login");
+              } else {
+                const url = API_URL + '/userData/' + value.replace(/"/g, '')
+                axios.get(url)
+                .then((response) => {
+                    setUserData(response.data);
+                    setValue(response.data.city);
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    console.error('Error getting user data:', error);
+                });
+              }
+            } catch(e) {
+              // error reading value
+            }
+        }
+        getData();
+    }, [isFocused])
+
+    const handleDisconnect = () => {
+        AsyncStorage.removeItem('userData')
+        .then(() => {
+            navigation.navigate('Login');
+        })
+        .catch((error) => {
+            console.error('Error removing user data:', error);
+        });
+    }
+
+    return (
+        <View style={styles.container}>
+            <View style={styles.info}>
+                <Feather name="user" size={75} color="white" />
+                <View style={styles.name}>
+                    <Text style={styles.title}>{userData.firstName} {userData.lastName}</Text>
+                    <Feather name="edit-2" size={18} color="#2B57F2" />
+                </View>
+                <View style={styles.stats}>
+                    <View style={styles.allStat}>
+                        <Text style={styles.number}>0</Text>
+                        <Text style={styles.statName}>J'aime</Text>
+                    </View>
+                    <View style={styles.allStat}>
+                        <Text style={styles.number}>0</Text>
+                        <Text style={styles.statName}>Mes billets</Text>
+                    </View>
+                    <View style={{flex: 1, flexDirection: "column", alignItems: 'center', borderRightWidth: 1}}>
+                        <Text style={styles.number}>0</Text>
+                        <Text style={styles.statName}>Suivi(e)s</Text>
+                    </View>
+                </View>
+                <View style={styles.settings}>
+                    <View style={{height: 1, width: "100%", position: "absolute", backgroundColor: COLORS.grey, marginTop: 15}}/>
+                    <Text style={{fontSize: 24, fontWeight: 'bold', color: COLORS.white, marginTop: 30, marginBottom: 15, borderTopWidth: 1, borderTopColor: COLORS.grey, marginLeft: 10}}>Paramètres</Text>
+                    <View style={styles.param}>
+                        <Text style={styles.paramText}>Ville principal</Text>
+                        <Text style={{color: COLORS.blue, marginRight: 50}}>{value}</Text>
+                        <Dropdown
+                            style={styles.dropdown}
+                            data={data}
+                            maxHeight={300}
+                            onChange={item => {
+                                changeValue(item.value);
+                            }}
+                            renderItem={renderItem}
+                        />
+                    </View>
+                    <View style={styles.param}>
+                        <Text style={styles.paramText}>Copier les évènements dans le calendrier</Text>
+                        <Switch value={isEnabled} style={{ 
+                            transform: [{ scaleX: .8 }, { scaleY: .8 }]
+                        }}
+                        onChange={() => {{setIsEnabled(previousState => !previousState);}}}
+                        />
+                    </View>
+                    <TouchableOpacity style={styles.param}>
+                        <Text style={styles.paramText}>Gérer les évènements</Text>
+                        <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />                    
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.param}>
+                        <Text style={styles.paramText}>Gérer les options de connexion</Text>
+                        <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.param}>
+                        <Text style={styles.paramText}>Paramètres du compte</Text>
+                        <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.param} onPress={handleDisconnect}>
+                        <Text style={styles.paramText}>Deconnexion</Text>
+                        <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.param} onPress={() => navigation.replace("Home")}>
+                        <Text style={styles.paramText}>Passer au mode utilisateur</Text>
+                        <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </View>
+    );
 };
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  profileInfo: {
-    backgroundColor: '#ffffff',
-    padding: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        backgroundColor: COLORS.lightblack,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: COLORS.white,
+        marginRight: 10
+    },
+    info: {
+        flexDirection: "column",
+        alignItems: 'center',
+        marginTop: 40
+    },
+    name: {
+        flexDirection: "row",
+        alignItems: 'center',
+        marginTop: 20
+    },
+    stats: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        marginTop: 20
+    },
+    allStat: {
+        flex: 1,
+        flexDirection: "column",
+        alignItems: 'center',
+        borderRightWidth: 1,
+        borderRightColor: COLORS.grey,
+    },
+    number: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: COLORS.white
+    },
+    statName: {
+        marginTop: 10,
+        fontSize: 18,
+        color: COLORS.blue
+    },
+    settings: {
+        flexDirection: "column",
+        alignItems: 'flex-start',
+        alignSelf: 'flex-start',
+    },
+    param: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        borderBottomWidth: 1,
+        borderBlockColor: COLORS.grey,
+        alignItems: 'center',
+        paddingLeft: 15,
+        paddingRight: 5,
+    },
+    paramText: {
+        color: COLORS.white,
+        flex: 1,
+        paddingTop: 20,
+        paddingBottom: 20,
+    },
+    dropdown: {
+        width: 200,
+        position: 'absolute',
+        right: 0,
+        margin: 16,
+        height: 50,
+        padding: 12,
+        elevation: 2,
+      },
+      icon: {
+        marginRight: 5,
+      },
+      item: {
+        padding: 17,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: COLORS.lightblack,
+      },
+      textItem: {
+        flex: 1,
+        fontSize: 16,
+        color: COLORS.blue,
+      },
 });
 
-export default ProfileScreen;
+
+export default AccountScreen;

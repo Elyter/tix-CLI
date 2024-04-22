@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { FontAwesome } from '@expo/vector-icons';
 import AddEvent from '../screens/EventForm';
 import ProfileScreen from '../screens/ProfileScreen';
 import MyEvents from '../screens/MyEvents';
@@ -48,9 +49,11 @@ const OrganizerNav = ({ navigation }) => {
         component={ProfileScreen}
         options={{
             tabBarIcon: ({size, color}) => (
-              <AntDesign name="user" size={24} color={color} />
+              <FontAwesome name="user" size={size} color={color} />
             ),
+            headerShown: false,
           }}
+
       /> 
     </Tab.Navigator>
   );

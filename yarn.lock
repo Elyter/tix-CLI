@@ -4289,6 +4289,11 @@ fs.realpath@^1.0.0:
   resolved "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
 
+fsevents@^2.3.2:
+  version "2.3.3"
+  resolved "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz"
+  integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
+
 function-bind@^1.1.2:
   version "1.1.2"
   resolved "https://registry.npmjs.org/function-bind/-/function-bind-1.1.2.tgz"
@@ -5172,10 +5177,10 @@ lighthouse-logger@^1.0.0:
     debug "^2.6.9"
     marky "^1.2.2"
 
-lightningcss-win32-x64-msvc@1.19.0:
+lightningcss-darwin-arm64@1.19.0:
   version "1.19.0"
-  resolved "https://registry.npmjs.org/lightningcss-win32-x64-msvc/-/lightningcss-win32-x64-msvc-1.19.0.tgz"
-  integrity sha512-C+VuUTeSUOAaBZZOPT7Etn/agx/MatzJzGRkeV+zEABmPuntv1zihncsi+AyGmjkkzq3wVedEy7h0/4S84mUtg==
+  resolved "https://registry.npmjs.org/lightningcss-darwin-arm64/-/lightningcss-darwin-arm64-1.19.0.tgz"
+  integrity sha512-wIJmFtYX0rXHsXHSr4+sC5clwblEMji7HHQ4Ub1/CznVRxtCFha6JIt5JZaNf8vQrfdZnBxLLC6R8pC818jXqg==
 
 lightningcss@~1.19.0:
   version "1.19.0"
@@ -6384,6 +6389,14 @@ react-native-element-dropdown@^2.10.4:
   dependencies:
     lodash "^4.17.21"
 
+react-native-flash-message@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.npmjs.org/react-native-flash-message/-/react-native-flash-message-0.4.2.tgz"
+  integrity sha512-YvdXRW9AGMTI99S3DJZhLO0mbk/ehKv/UQf4/Df+3dtGi8DlkidRbyqCQZk1WMtZ7rN85PMTGr/xEI9CF9z0YA==
+  dependencies:
+    prop-types "^15.8.1"
+    react-native-iphone-screen-helper "^2.0.2"
+
 "react-native-gesture-handler@>= 1.0.0", react-native-gesture-handler@~2.14.0:
   version "2.14.1"
   resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.14.1.tgz"
@@ -6394,6 +6407,11 @@ react-native-element-dropdown@^2.10.4:
     invariant "^2.2.4"
     lodash "^4.17.21"
     prop-types "^15.7.2"
+
+react-native-iphone-screen-helper@^2.0.2:
+  version "2.1.1"
+  resolved "https://registry.npmjs.org/react-native-iphone-screen-helper/-/react-native-iphone-screen-helper-2.1.1.tgz"
+  integrity sha512-geuw/bli83+tOg8UpoioLk1H1aEy0wnMDusWkCazsyH6fSk6qzmgaZ2cRyyJRU8s2tG87HctZFKGTkyYzcUcfA==
 
 react-native-pager-view@*, "react-native-pager-view@>= 4.0.0", react-native-pager-view@6.2.3:
   version "6.2.3"
@@ -6420,10 +6438,10 @@ react-native-tab-view@^3.5.2, "react-native-tab-view@>= 3.0.0":
   dependencies:
     use-latest-callback "^0.1.5"
 
-react-native-toast-message@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.npmjs.org/react-native-toast-message/-/react-native-toast-message-2.2.0.tgz"
-  integrity sha512-AFti8VzUk6JvyGAlLm9/BknTNDXrrhqnUk7ak/pM7uCTxDPveAu2ekszU0on6vnUPFnG04H/QfYE2IlETqeaWw==
+react-native-toast-notifications@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.npmjs.org/react-native-toast-notifications/-/react-native-toast-notifications-3.4.0.tgz"
+  integrity sha512-ZvB//jLhRiBRemtcH7vGP1maiKCikqtW4aDqo+QYvEIOcX0y3GrjxRayVAqI4oh0qJgd/26DkbM8COobj+0MEQ==
 
 react-native-vector-icons@^10.0.3:
   version "10.0.3"
@@ -6433,7 +6451,7 @@ react-native-vector-icons@^10.0.3:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@0.73.4:
+react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@>=0.42.0, react-native@0.73.4:
   version "0.73.4"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.73.4.tgz"
   integrity sha512-VtS+Yr6OOTIuJGDECIYWzNU8QpJjASQYvMtfa/Hvm/2/h5GdB6W9H9TOmh13x07Lj4AOhNMx3XSsz6TdrO4jIg==

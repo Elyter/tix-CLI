@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Modal } from 'react-native';
 import { Entypo } from '@expo/vector-icons'; // Importation de l'icône Entypo
+import { AntDesign } from '@expo/vector-icons'; // Importation de l'icône AntDesign
+import DateTimePicker from '@react-native-community/datetimepicker';
+import ToastBar from '../component/Toastbar';
 import { COLORS } from '../../assets/colors';
-
+import { useNavigation } from '@react-navigation/native'; // Importation de useNavigation
 
 const EventForm = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState(['', '', '', '', '', '', '', '']);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [numPhases, setNumPhases] = useState(1); // Nombre de phases initial
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  const [showDatePickerModal, setShowDatePickerModal] = useState(false); // Déplacer le hook useState ici
+
+  const navigation = useNavigation(); // Obtenir l'objet de navigation
 
   const questions = [
     'Nom de l\'événement:',
@@ -24,9 +31,18 @@ const EventForm = () => {
   const CustomHeader = ({ title }) => {
     return (
       <View style={styles.header}>
+        <TouchableOpacity onPress={handleBackButton}>
+          <AntDesign name="left" size={27} color={COLORS.orange} />
+        </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
       </View>
     );
+  };
+
+  const handleBackButton = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
   };
 
   const handleAnswer = (text) => {
@@ -45,7 +61,7 @@ const EventForm = () => {
         }
       }
       setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
+    } 
   };
 
   const handleDateChange = (event, selectedDate) => {
@@ -53,6 +69,7 @@ const EventForm = () => {
     setSelectedDate(currentDate);
     const formattedDate = currentDate.toLocaleDateString('fr-FR');
     handleAnswer(formattedDate);
+    setShowDatePickerModal(false); // Fermer le modal après la sélection de la date
   };
 
   const decrementPhases = () => {
@@ -74,7 +91,12 @@ const EventForm = () => {
     setAnswers(['', '', '', '', '', '', '', '']);
     setCurrentQuestionIndex(0);
     // Affichez un message de succès ou naviguez vers une autre vue
-    toast
+    setToastMessage('Événement ajouté !'); 
+    setShowToast(true); // Affichez le ToastBar
+    setTimeout(() => {
+      setShowToast(false); // Cachez le ToastBar après 3 secondes
+    }, 3000);
+    navigation.navigate('MyEvents');
   };
 
   // Calcul du pourcentage d'avancement
@@ -94,34 +116,42 @@ const EventForm = () => {
           {/* Le reste du contenu du formulaire */}
           {currentQuestionIndex === 1 ? (
             <>
-              <View style={[styles.input, styles.datePickerContainer]}>
-                <DateTimePicker
-                  value={selectedDate}
-                  mode="date"
-                  display="spinner"
-                  onChange={handleDateChange}
-                  textColor={COLORS.white} 
-                  themeVariant="light" 
-                />
-              </View>
+              <TouchableOpacity style={[styles.input, styles.datePickerContainer]} onPress={() => setShowDatePickerModal(true)}>
+                <Text style={styles.datePickerText}>{selectedDate.toLocaleDateString('fr-FR')}</Text>
+              </TouchableOpacity>
+              <Modal
+                visible={showDatePickerModal}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setShowDatePickerModal(false)}
+              >
+                <TouchableWithoutFeedback onPress={() => setShowDatePickerModal(false)}>
+                  <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                      <DateTimePicker
+                        value={selectedDate}
+                        mode="date"
+                        display="spinner"
+                        onChange={handleDateChange}
+                      />
+                    </View>
+                  </View>
+                </TouchableWithoutFeedback>
+              </Modal>
             </>
           ) : currentQuestionIndex === 3 ? (
             <View style={styles.numericInput}>
               <TouchableOpacity style={styles.phaseButton} onPress={decrementPhases}>
-                <Text><Entypo name="minus" size={24} color="black" /></Text> 
+                <Entypo name="minus" size={24} color="black" /> 
               </TouchableOpacity>
-              <TextInput
-                style={[styles.input, styles.phaseInput]} 
-                value={numPhases.toString()} 
-                editable={false} 
-              />
+              <Text style={styles.phaseInput}>{numPhases}</Text>
               <TouchableOpacity style={styles.phaseButton} onPress={incrementPhases}>
-                <Text><Entypo name="plus" size={24} color="black" /></Text> 
+                <Entypo name="plus" size={24} color="black" /> 
               </TouchableOpacity>
             </View>
           ) : currentQuestionIndex >= 4 && currentQuestionIndex < questions.length - 2 ? (
             <TextInput
-              style={styles.input}
+              style={[styles.input, answers[currentQuestionIndex] === '' ? styles.emptyInput : null]}
               value={answers[currentQuestionIndex]}
               onChangeText={handleAnswer}
               placeholder="0 €"
@@ -130,7 +160,7 @@ const EventForm = () => {
             />
           ) : (
             <TextInput
-              style={styles.input}
+              style={[styles.input, answers[currentQuestionIndex] === '' ? styles.emptyInput : null]}
               value={answers[currentQuestionIndex]}
               onChangeText={handleAnswer}
               placeholder="Réponse"
@@ -138,6 +168,7 @@ const EventForm = () => {
             />
           )}
         </View>
+  
         {currentQuestionIndex < questions.length - 1 ? (
           <TouchableOpacity style={styles.button} onPress={handleNextQuestion}>
             <Text style={styles.buttonText}>Question suivante</Text>
@@ -147,6 +178,7 @@ const EventForm = () => {
             <Text style={styles.buttonText}>Ajouter l'événement</Text>
           </TouchableOpacity>
         )}
+        {showToast && <ToastBar message={toastMessage} />}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -163,11 +195,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 50,
     paddingBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: COLORS.orange,
+    marginLeft: 60,
   },
   progressBar: {
     height: 5,
@@ -191,18 +226,30 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 60,
     color: COLORS.white,
-
     borderColor: COLORS.grey,
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  emptyInput: {
+    borderColor: COLORS.grey,
+  },
   datePickerContainer: {
     alignItems: 'center',
-    height: 200, // Hauteur du conteneur du calendrier
+    justifyContent: 'center',
+    height: 50,
+  },
+  datePickerText: {
+    color: COLORS.white,
+    fontSize: 16,
   },
   numericInput: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '55%',
   },
   buttonText: {
     color: COLORS.black,
@@ -226,19 +273,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderRadius: 5,
-    marginHorizontal: -90,
-  },
-  phaseButtonText: {
-    color: COLORS.black,
-    fontSize: 18,
-    fontWeight: 'bold',
   },
   phaseInput: {
     fontSize: 34,
-    marginBottom: 50,
     fontWeight: 'bold',
     color: COLORS.white,
-    textAlign: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: COLORS.lightblack,
+    borderRadius: 10,
+    padding: 20,
   },
 });
 
