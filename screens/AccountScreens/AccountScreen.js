@@ -27,6 +27,7 @@ const AccountScreen = ({navigation}) => {
     const [isEnabled, setIsEnabled] = React.useState(false);
     const [userData, setUserData] = React.useState({});
     const [value, setValue] = React.useState(data[0].value);
+    const [organizer, setOrganizer] = React.useState(false);
 
     const isFocused = useIsFocused();
 
@@ -64,6 +65,9 @@ const AccountScreen = ({navigation}) => {
                 .then((response) => {
                     setUserData(response.data);
                     setValue(response.data.city);
+                    if (response.data.role === "ORGANIZER") {
+                        setOrganizer(true);
+                    }
                     console.log(response.data);
                 })
                 .catch((error) => {
@@ -149,10 +153,17 @@ const AccountScreen = ({navigation}) => {
                         <Text style={styles.paramText}>Deconnexion</Text>
                         <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
                     </TouchableOpacity>
+                    {organizer ? (
                     <TouchableOpacity style={styles.param} onPress={() => navigation.replace("OrganizerNav")}>
                         <Text style={styles.paramText}>Passer au mode organisteur</Text>
                         <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
                     </TouchableOpacity>
+                    ) : (
+                    <TouchableOpacity style={styles.param} onPress={() => navigation.replace("OrganizerNav")}>
+                        <Text style={styles.paramText}>Devenir organisateur</Text>
+                        <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
+                    </TouchableOpacity>
+                    )}
                 </View>
             </View>
         </View>
