@@ -295,11 +295,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderRadius: 5,
+    marginTop: 65,
   },
   phaseInput: {
     fontSize: 34,
     fontWeight: 'bold',
     color: COLORS.white,
+    marginTop: 65,
   },
   modalContainer: {
     flex: 1,
