@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Modal, Image } from 'react-native';
-import { Entypo } from '@expo/vector-icons'; // Importation de l'icône Entypo
-import { AntDesign } from '@expo/vector-icons'; // Importation de l'icône AntDesign
+import { Entypo } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import ToastBar from '../component/Toastbar';
 import { COLORS } from '../../assets/colors';
-import { useNavigation } from '@react-navigation/native'; // Importation de useNavigation
+import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 
 const EventForm = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState(['', '', '', '', '', '', '', '']);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [numPhases, setNumPhases] = useState(1); // Nombre de phases initial
+  const [numPhases, setNumPhases] = useState(1);
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
-  const [showDatePickerModal, setShowDatePickerModal] = useState(false); // Déplacer le hook useState ici
+  const [showDatePickerModal, setShowDatePickerModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const navigation = useNavigation(); // Obtenir l'objet de navigation
+  const navigation = useNavigation();
 
   const questions = [
     'Nom de l\'événement:',
@@ -71,7 +71,7 @@ const EventForm = () => {
     setSelectedDate(currentDate);
     const formattedDate = currentDate.toLocaleDateString('fr-FR');
     handleAnswer(formattedDate);
-    setShowDatePickerModal(false); // Fermer le modal après la sélection de la date
+    setShowDatePickerModal(false);
   };
 
   const decrementPhases = () => {
@@ -87,16 +87,13 @@ const EventForm = () => {
   };
 
   const handleSubmit = () => {
-    // Vous pouvez ajouter le code pour soumettre les réponses ici
     console.log('Réponses soumises :', answers);
-    // Réinitialisez les réponses et revenez à la première question
     setAnswers(['', '', '', '', '', '', '', '']);
     setCurrentQuestionIndex(0);
-    // Affichez un message de succès ou naviguez vers une autre vue
     setToastMessage('Événement ajouté !'); 
-    setShowToast(true); // Affichez le ToastBar
+    setShowToast(true);
     setTimeout(() => {
-      setShowToast(false); // Cachez le ToastBar après 3 secondes
+      setShowToast(false);
     }, 3000);
     navigation.navigate('MyEvents');
   };
@@ -115,21 +112,18 @@ const EventForm = () => {
     }
   };
 
-  // Calcul du pourcentage d'avancement
   const progressPercentage = (currentQuestionIndex + 1) / questions.length * 100;
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <CustomHeader title="Ajouter un événement" />
-        {/* Barre de progression */}
         <View style={styles.progressBar}>
           <View style={{ width: `${progressPercentage}%`, backgroundColor: COLORS.orange, height: 5 }} />
         </View>
 
         <View style={styles.inputContainer}>
           <Text style={styles.questionText}>{questions[currentQuestionIndex]}</Text>
-          {/* Le reste du contenu du formulaire */}
           {currentQuestionIndex === 1 ? (
             <>
               <TouchableOpacity style={[styles.input, styles.datePickerContainer]} onPress={() => setShowDatePickerModal(true)}>
@@ -157,10 +151,15 @@ const EventForm = () => {
             </>
           ) : currentQuestionIndex === questions.length-2 ? (
             <>
-              <TouchableOpacity style={styles.input} onPress={pickImage}>
-                <Text style={styles.datePickerText}>Choisir une image</Text>
-              </TouchableOpacity>
-              {selectedImage && <Image source={{ uri: selectedImage }} style={{ width: 200, height: 200 }} />}
+              {selectedImage ? (
+                <View style={styles.imagePreviewContainer}>
+                  <Image source={{ uri: selectedImage }} style={styles.imagePreview} />
+                </View>
+              ) : (
+                <TouchableOpacity style={styles.input} onPress={pickImage}>
+                  <Text style={styles.datePickerText}>Choisir une image</Text>
+                </TouchableOpacity>
+              )}
             </>
           ) : currentQuestionIndex === 3 ? (
             <View style={styles.numericInput}>
@@ -313,6 +312,16 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.lightblack,
     borderRadius: 10,
     padding: 20,
+  },
+  imagePreviewContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  imagePreview: {
+    width: 200,
+    height: 200,
+    borderRadius: 5,
   },
 });
 

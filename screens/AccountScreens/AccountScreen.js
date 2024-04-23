@@ -87,26 +87,42 @@ const AccountScreen = ({navigation}) => {
         });
     }
 
+    const handleFavoritesClick = () => {
+        navigation.navigate('FavoritesNav')
+    }
+
+    const handleTicketsClick = () => {
+        navigation.navigate('TicketsNav')
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.info}>
                 <Feather name="user" size={75} color="white" />
                 <View style={styles.name}>
-                    <Text style={styles.title}>{userData.firstName} {userData.lastName}</Text>
-                    <Feather name="edit-2" size={18} color="#2B57F2" />
+                    <TouchableOpacity style={styles.nameContainer}>
+                        <Text style={styles.title}>{userData.firstName} {userData.lastName}</Text>
+                        <Feather name="edit-2" size={22} color="#2B57F2" />
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.stats}>
                     <View style={styles.allStat}>
-                        <Text style={styles.number}>0</Text>
-                        <Text style={styles.statName}>J'aime</Text>
+                        <TouchableOpacity onPress={handleFavoritesClick}>
+                            <Text style={styles.number}>0</Text>
+                            <Text style={styles.statName}>J'aime</Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.allStat}>
-                        <Text style={styles.number}>0</Text>
-                        <Text style={styles.statName}>Mes billets</Text>
+                        <TouchableOpacity onPress={handleTicketsClick}>      
+                            <Text style={styles.number}>0</Text>
+                            <Text style={styles.statName}>Mes billets</Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={{flex: 1, flexDirection: "column", alignItems: 'center', borderRightWidth: 1}}>
-                        <Text style={styles.number}>0</Text>
-                        <Text style={styles.statName}>Suivi(e)s</Text>
+                        <TouchableOpacity onPress={handleFavoritesClick}>   
+                            <Text style={styles.number}>0</Text>
+                            <Text style={styles.statName}>Suivi(e)s</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View style={styles.settings}>
@@ -166,11 +182,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: COLORS.lightblack,
     },
+    nameContainer:{
+        flexDirection: 'row',
+    },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         color: COLORS.white,
-        marginRight: 10
+        marginRight: 10,
     },
     info: {
         flexDirection: "column",
@@ -197,10 +216,11 @@ const styles = StyleSheet.create({
     number: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: COLORS.white
+        color: COLORS.white,
+        textAlign: 'center',
     },
     statName: {
-        marginTop: 10,
+        marginTop: 5,
         fontSize: 18,
         color: COLORS.blue
     },
