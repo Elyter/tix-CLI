@@ -7,6 +7,7 @@ import { API_URL } from '@env';
 import axios from 'axios';
 import { Dropdown } from 'react-native-element-dropdown';
 import { COLORS } from '../../assets/colors';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const data = [
     { label: 'Paris', value: 'Paris' },
@@ -102,14 +103,14 @@ const AccountScreen = ({navigation}) => {
                 <View style={styles.name}>
                     <TouchableOpacity style={styles.nameContainer}>
                         <Text style={styles.title}>{userData.firstName} {userData.lastName}</Text>
-                        <Feather name="edit-2" size={22} color="#2B57F2" />
+                        <Feather name="edit-2" size={22} color={COLORS.blue} />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.stats}>
                     <View style={styles.allStat}>
                         <TouchableOpacity onPress={handleFavoritesClick}>
                             <Text style={styles.number}>0</Text>
-                            <Text style={styles.statName}>J'aime</Text>
+                            <Text style={styles.statName}>Favoris</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.allStat}>
@@ -245,7 +246,7 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     dropdown: {
-        width: 200,
+        width: 150,
         position: 'absolute',
         right: 0,
         margin: 16,
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
       textItem: {
         flex: 1,
         fontSize: 16,
-        color: COLORS.blue,
+        color: COLORS.white,
       },
 });
 

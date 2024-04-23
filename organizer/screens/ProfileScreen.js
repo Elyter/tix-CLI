@@ -97,16 +97,24 @@ const AccountScreen = ({navigation}) => {
                 </View>
                 <View style={styles.stats}>
                     <View style={styles.allStat}>
+                      <TouchableOpacity style={styles.nameContainer}>
                         <Text style={styles.number}>0</Text>
                         <Text style={styles.statName}>J'aime</Text>
+                      </TouchableOpacity>
+                        
                     </View>
                     <View style={styles.allStat}>
+                      <TouchableOpacity style={styles.nameContainer}>
                         <Text style={styles.number}>0</Text>
-                        <Text style={styles.statName}>Mes billets</Text>
+                        <Text style={styles.statName}>MyEvents</Text>
+                      </TouchableOpacity>
+                        
                     </View>
                     <View style={{flex: 1, flexDirection: "column", alignItems: 'center', borderRightWidth: 1}}>
+                      <TouchableOpacity style={styles.nameContainer}>
                         <Text style={styles.number}>0</Text>
-                        <Text style={styles.statName}>Suivi(e)s</Text>
+                        <Text style={styles.statName}>Followers</Text>
+                      </TouchableOpacity>
                     </View>
                 </View>
                 <View style={styles.settings}>
@@ -166,11 +174,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: COLORS.lightblack,
     },
+    nameContainer:{
+        flexDirection: 'row',
+    },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         color: COLORS.white,
-        marginRight: 10
+        marginRight: 10,
     },
     info: {
         flexDirection: "column",
@@ -197,10 +208,11 @@ const styles = StyleSheet.create({
     number: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: COLORS.white
+        color: COLORS.white,
+        textAlign: 'center',
     },
     statName: {
-        marginTop: 10,
+        marginTop: 5,
         fontSize: 18,
         color: COLORS.blue
     },
@@ -225,7 +237,7 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     dropdown: {
-        width: 200,
+        width: 150,
         position: 'absolute',
         right: 0,
         margin: 16,
@@ -246,9 +258,6 @@ const styles = StyleSheet.create({
       textItem: {
         flex: 1,
         fontSize: 16,
-        color: COLORS.blue,
+        color: COLORS.white,
       },
 });
-
-
-export default AccountScreen;
