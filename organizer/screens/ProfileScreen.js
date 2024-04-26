@@ -64,6 +64,10 @@ const AccountScreen = ({ navigation }) => {
             });
     };
 
+    const handleFollowersClick = () => {
+        navigation.navigate('Followers');
+    }
+
 
     return (
         <View style={styles.container}>
@@ -77,7 +81,7 @@ const AccountScreen = ({ navigation }) => {
                 </View>
                 <View style={styles.stats}>
                     <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', borderRightWidth: 1 }}>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={handleFollowersClick} >
                             <Text style={styles.number}>0</Text>
                             <Text style={styles.statName}>Followers</Text>
                         </TouchableOpacity>

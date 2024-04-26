@@ -2,10 +2,10 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome } from '@expo/vector-icons';
 import AddEvent from '../screens/EventForm';
-import ProfileScreen from '../screens/ProfileScreen';
-import MyEvents from '../screens/MyEvents';
 import { AntDesign } from '@expo/vector-icons';
 import { COLORS } from '../../assets/colors.js';
+import MyEvents from '../screens/MyEvents.js'; // Assurez-vous que le chemin est correct
+import ProfileNav from './ProfileNav.js'; // Assurez-vous que le chemin est correct
 
 const Tab = createBottomTabNavigator();
 
@@ -41,12 +41,11 @@ const OrganizerNav = ({ navigation }) => {
               <AntDesign name="pluscircleo" size={24} color={color} />
             ),
             headerShown: false,
-
           }}
       />
       <Tab.Screen 
         name="profile" 
-        component={ProfileScreen}
+        component={ProfileNav}
         options={{
             tabBarIcon: ({size, color}) => (
               <FontAwesome name="user" size={size} color={color} />
