@@ -116,7 +116,7 @@ const AccountScreen = ({navigation}) => {
                     <View style={styles.allStat}>
                         <TouchableOpacity onPress={handleTicketsClick}>      
                             <Text style={styles.number}>0</Text>
-                            <Text style={styles.statName}>Mes billets</Text>
+                            <Text style={styles.statName}>MyTix</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{flex: 1, flexDirection: "column", alignItems: 'center', borderRightWidth: 1}}>

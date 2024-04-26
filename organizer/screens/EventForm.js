@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Modal, Image } from 'react-native';
-import { Entypo } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
+import { Entypo, AntDesign } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import ToastBar from '../component/Toastbar';
 import { COLORS } from '../../assets/colors';
@@ -30,39 +29,30 @@ const EventForm = () => {
     'Description:',
   ];
 
-  const CustomHeader = ({ title }) => {
-    return (
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBackButton}>
-          <AntDesign name="left" size={27} color={COLORS.orange} />
-        </TouchableOpacity>
-        <Text style={styles.title}>{title}</Text>
-      </View>
-    );
-  };
+  const CustomHeader = ({ title }) => (
+    <View style={styles.header}>
+      <TouchableOpacity onPress={handleBackButton}>
+        <AntDesign name="left" size={27} color={COLORS.orange} />
+      </TouchableOpacity>
+      <Text style={styles.title}>{title}</Text>
+    </View>
+  );
 
-  const handleBackButton = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
-  };
+  const handleBackButton = () => setCurrentQuestionIndex(prevIndex => prevIndex > 0 ? prevIndex - 1 : prevIndex);
 
-  const handleAnswer = (text) => {
-    const updatedAnswers = [...answers];
+  const handleAnswer = (text) => setAnswers(prevAnswers => {
+    const updatedAnswers = [...prevAnswers];
     updatedAnswers[currentQuestionIndex] = text;
-    setAnswers(updatedAnswers);
-  };
+    return updatedAnswers;
+  });
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      if (currentQuestionIndex === 1) {
-        const currentDate = new Date();
-        if (selectedDate < currentDate) {
-          alert('Veuillez choisir une date future.');
-          return;
-        }
+      if (currentQuestionIndex === 1 && selectedDate < new Date()) {
+        alert('Veuillez choisir une date future.');
+        return;
       }
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setCurrentQuestionIndex(prevIndex => prevIndex + 1);
     } 
   };
 
@@ -74,17 +64,9 @@ const EventForm = () => {
     setShowDatePickerModal(false);
   };
 
-  const decrementPhases = () => {
-    if (numPhases > 1) {
-      setNumPhases(numPhases - 1);
-    }
-  };
+  const decrementPhases = () => setNumPhases(prevNum => prevNum > 1 ? prevNum - 1 : prevNum);
 
-  const incrementPhases = () => {
-    if (numPhases < 5) {
-      setNumPhases(numPhases + 1);
-    }
-  };
+  const incrementPhases = () => setNumPhases(prevNum => prevNum < 5 ? prevNum + 1 : prevNum);
 
   const handleSubmit = () => {
     console.log('Réponses soumises :', answers);
@@ -92,9 +74,7 @@ const EventForm = () => {
     setCurrentQuestionIndex(0);
     setToastMessage('Événement ajouté !'); 
     setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-    }, 3000);
+    setTimeout(() => setShowToast(false), 3000);
     navigation.navigate('MyEvents');
   };
 
@@ -149,6 +129,31 @@ const EventForm = () => {
                 </TouchableWithoutFeedback>
               </Modal>
             </>
+          ) : currentQuestionIndex === 3 ? (
+            <View style={styles.numericInput}>
+              <TouchableOpacity style={styles.phaseButton} onPress={decrementPhases}>
+                <Entypo name="minus" size={24} color="black" /> 
+              </TouchableOpacity>
+              <Text style={styles.phaseInput}>{numPhases}</Text>
+              <TouchableOpacity style={styles.phaseButton} onPress={incrementPhases}>
+                <Entypo name="plus" size={24} color="black" /> 
+              </TouchableOpacity>
+            </View>
+          ) : currentQuestionIndex >= 4 && currentQuestionIndex < questions.length - 2 ? (
+            <View style={styles.input}>
+              <TextInput
+                style={[
+                  styles.textInput,
+                  answers[currentQuestionIndex] === '' ? styles.emptyInput : null
+                ]}
+                value={answers[currentQuestionIndex]}
+                onChangeText={handleAnswer}
+                placeholder="Réponse"
+                placeholderTextColor={COLORS.grey}
+                keyboardType={'numeric'}
+              />
+              <Text style={styles.currencySymbol}>€</Text>
+            </View>
           ) : currentQuestionIndex === questions.length-2 ? (
             <>
               {selectedImage ? (
@@ -161,24 +166,6 @@ const EventForm = () => {
                 </TouchableOpacity>
               )}
             </>
-          ) : currentQuestionIndex === 3 ? (
-            <View style={styles.numericInput}>
-              <TouchableOpacity style={styles.phaseButton} onPress={decrementPhases}>
-                <Entypo name="minus" size={24} color="black" /> 
-              </TouchableOpacity>
-              <Text style={styles.phaseInput}>{numPhases}</Text>
-              <TouchableOpacity style={styles.phaseButton} onPress={incrementPhases}>
-                <Entypo name="plus" size={24} color="black" /> 
-              </TouchableOpacity>
-            </View>
-          ) : currentQuestionIndex >= 5 && currentQuestionIndex < questions.length - 1 ? (
-            <TextInput
-              style={[styles.input, answers[currentQuestionIndex] === '' ? styles.emptyInput : null]}
-              value={answers[currentQuestionIndex]}
-              onChangeText={handleAnswer}
-              placeholder="Réponse"
-              placeholderTextColor={COLORS.grey}
-            />
           ) : (
             <TextInput
               style={[styles.input, answers[currentQuestionIndex] === '' ? styles.emptyInput : null]}
@@ -190,15 +177,14 @@ const EventForm = () => {
           )}
         </View>
   
-        {currentQuestionIndex < questions.length - 1 ? (
-          <TouchableOpacity style={styles.button} onPress={handleNextQuestion}>
-            <Text style={styles.buttonText}>Question suivante</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.buttonText}>Ajouter l'événement</Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={currentQuestionIndex < questions.length - 1 ? handleNextQuestion : handleSubmit}
+        >
+          <Text style={styles.buttonText}>
+            {currentQuestionIndex < questions.length - 1 ? 'Question suivante' : 'Ajouter l\'événement'}
+          </Text>
+        </TouchableOpacity>
         {showToast && <ToastBar message={toastMessage} />}
       </View>
     </TouchableWithoutFeedback>
@@ -242,6 +228,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   input: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     height: 50,
     width: '90%',
     marginBottom: 10,
@@ -251,8 +240,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+  },
+  textInput: {
+    flex: 1,
+    color: COLORS.white,
+  },
+  currencySymbol: {
+    color: COLORS.white,
+    fontSize: 20,
+    marginRight: 10,
   },
   emptyInput: {
     borderColor: COLORS.grey,

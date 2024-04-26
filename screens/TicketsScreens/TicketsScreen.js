@@ -8,7 +8,7 @@ const Tab = createMaterialTopTabNavigator();
 const TicketsScreen = () => {
   return (
     <View style={{ flex: 1 }}>
-      <CustomHeader title="Mes Billets" />
+      <CustomHeader title="MyTix" />
       <Tab.Navigator
         tabBarOptions={{
           labelStyle: { fontSize: 14, fontWeight: 'bold'},
