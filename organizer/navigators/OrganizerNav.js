@@ -5,7 +5,7 @@ import AddEvent from '../screens/EventForm';
 import { AntDesign } from '@expo/vector-icons';
 import { COLORS } from '../../assets/colors.js';
 import MyEvents from '../screens/MyEvents.js'; // Assurez-vous que le chemin est correct
-import ProfileNav from './ProfileNav.js'; // Assurez-vous que le chemin est correct
+import ProfileNav from '../navigators/ProfileNav.js'; // Assurez-vous que le chemin est correct
 
 const Tab = createBottomTabNavigator();
 

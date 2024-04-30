@@ -59,11 +59,11 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.darkblack, // Couleur de fond du titre
   },
   header: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     color: COLORS.orange, // Couleur de l'en-tête
     textAlign: 'center', // Centrer le texte
-    marginTop: 70, // Marge supérieure
+    marginTop: 60, // Marge supérieure
   },
   separator: {
     borderBottomWidth: 1,
@@ -101,8 +101,8 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     position: 'absolute',
-    top: 50,
-    left: 16,
+    top: 62,
+    left: 20,
     zIndex: 1, // Pour placer l'icône au-dessus du contenu
   },
 });
