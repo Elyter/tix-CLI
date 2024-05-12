@@ -13,15 +13,7 @@ const HomeScreen = ({navigation}) => {
     const isFocused = useIsFocused();
     const [loading, setLoading] = useState(true);
     const [events, setEvents] = useState([]);
-
-    const [organizers, setOrganizers] = useState([
-        { id: 1, name: 'Organizer 1', image: require('../../assets/images/organizer1.jpg'), isFollowing: false},
-        { id: 2, name: 'Organizer 2', image: require('../../assets/images/organizer1.jpg'), isFollowing: false},
-        { id: 3, name: 'Organizer 3', image: require('../../assets/images/organizer1.jpg'), isFollowing: false},
-        { id: 4, name: 'Organizer 4', image: require('../../assets/images/organizer1.jpg'), isFollowing: false},
-        { id: 5, name: 'Organizer 5', image: require('../../assets/images/organizer1.jpg'), isFollowing: false},
-        // les organisateurs
-    ]);
+    const [organizers, setOrganizers] = useState([]);
 
     useEffect(() => {
         setLoading(true);
@@ -33,6 +25,14 @@ const HomeScreen = ({navigation}) => {
         })
         .catch((error) => {
             console.error('Error getting events data:', error);
+        });
+        axios.get(API_URL + "/organizers/")
+        .then((response) => {
+            setOrganizers(response.data);
+            console.log(response.data)
+        })
+        .catch((error) => {
+            console.error('Error getting organizers data:', error);
         });
     }, [isFocused])
 
