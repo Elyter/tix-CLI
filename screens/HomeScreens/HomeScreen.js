@@ -63,6 +63,7 @@ const HomeScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
+                <Text style={styles.PrincipalTitle}>Tix</Text>
                 <SearchBar />
             </View>
             {/* Section: Organisateurs à suivre */}
@@ -145,6 +146,15 @@ const styles = StyleSheet.create({
         marginHorizontal: 16,
         color: COLORS.white,
 
+    },
+    PrincipalTitle: {
+        position: 'absolute',
+        fontSize: 38,
+        fontWeight: '700', // 'bold
+        color: COLORS.orange,
+        marginLeft: 35,
+        marginTop: 55,
+        
     },
 });
 
