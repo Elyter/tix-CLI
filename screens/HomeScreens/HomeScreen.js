@@ -101,6 +101,7 @@ const HomeScreen = ({navigation}) => {
             >
             <View style={styles.section}>
                 <Text style={styles.title}>Organisateurs à suivre</Text>
+                {!loading ? (
                 <FlatList
                     data={organizers}
                     keyExtractor={(item) => item.id.toString()}
@@ -116,6 +117,9 @@ const HomeScreen = ({navigation}) => {
                     showsHorizontalScrollIndicator={false}
                     style={{ width: '100%' }}
                 />
+                ) : (
+                    <ActivityIndicator size="large" color={COLORS.orange} />
+                )}
             </View>
             
             {/* Section: Événements populaires autour de vous */}

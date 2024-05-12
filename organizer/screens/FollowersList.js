@@ -20,7 +20,7 @@ const FollowersList = () => {
     { id: '9', username: 'user9', profileImage: require('../../assets/images/salim.jpg') },
     { id: '10', username: 'user10', profileImage: require('../../assets/images/elyter.jpg') },
   ];
-
+  
   // Render item for FlatList
   const renderItem = ({ item }) => (
     <View style={styles.item}>
