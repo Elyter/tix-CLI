@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, Text, StyleSheet, Image, Switch, TouchableOpacity, Button } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,7 +7,7 @@ import { API_URL } from '@env';
 import axios from 'axios';
 import { Dropdown } from 'react-native-element-dropdown';
 import { COLORS } from '../../assets/colors';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { Buffer, constants } from 'buffer';
 
 const data = [
     { label: 'Paris', value: 'Paris' },
@@ -22,13 +22,12 @@ const data = [
     { label: 'Lille', value: 'Lille' },
 ];
 
-
-
 const AccountScreen = ({navigation}) => {
     const [isEnabled, setIsEnabled] = React.useState(false);
     const [userData, setUserData] = React.useState({});
     const [value, setValue] = React.useState(data[0].value);
     const [organizer, setOrganizer] = React.useState(false);
+    const [ppUri, setPpUri] = React.useState(null);
 
     const isFocused = useIsFocused();
 
@@ -57,29 +56,44 @@ const AccountScreen = ({navigation}) => {
     useEffect(() => {
         const getData = async () => {
             try {
-              const value = await AsyncStorage.getItem('userData');
-              if(value === null) {
-                navigation.replace("Login");
-              } else {
-                const url = API_URL + '/userData/' + value.replace(/"/g, '')
-                axios.get(url)
-                .then((response) => {
-                    setUserData(response.data);
-                    setValue(response.data.city);
-                    if (response.data.role === "ORGANIZER") {
-                        setOrganizer(true);
-                    }
-                    console.log(response.data);
-                })
-                .catch((error) => {
-                    console.error('Error getting user data:', error);
-                });
-              }
+                const value = await AsyncStorage.getItem('userData');
+                if(value === null) {
+                    navigation.replace("Login");
+                } else {
+                    const url = API_URL + '/userData/' + value.replace(/"/g, '')
+                    axios.get(url)
+                    .then((response) => {
+                        setUserData(response.data);
+                        setValue(response.data.city);
+                        if (response.data.role === "ORGANIZER") {
+                            setOrganizer(true);
+                        }
+                        console.log(response.data);
+                    })
+                    .catch((error) => {
+                        console.error('Error getting user data:', error);
+                    });
+            }
             } catch(e) {
               // error reading value
             }
         }
         getData();
+        const fetchImage = async () => {
+            try {
+                console.log(userData)
+                console.log('Chargement de l\'image:', API_URL + userData.pp)
+                const response = await axios.get(API_URL + "/images/users/"+ userData.pp, { responseType: 'arraybuffer' });
+                if (response.data === null) {
+                    setPpUri(null);
+                }
+                setPpUri(response.data);
+            } catch (error) {
+                console.error('Erreur lors du chargement de l\'image:', error);
+            }
+        };
+
+        fetchImage();
     }, [isFocused])
 
     const handleDisconnect = () => {
@@ -103,9 +117,16 @@ const AccountScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
             <View style={styles.info}>
-                <Feather name="user" size={75} color="white" />
+                { ppUri ? (
+                    <Image
+                        source={{ uri: `data:image/jpeg;base64,${Buffer.from(ppUri, 'binary').toString('base64')}` }}
+                        style={styles.image}
+                    />                
+                ) : (
+                    <Feather name="user" size={75} color="white" />
+                )}
                 <View style={styles.name}>
-                    <TouchableOpacity style={styles.nameContainer}>
+                    <TouchableOpacity style={styles.nameContainer} onPress={() => navigation.navigate("EditProfile")}>
                         <Text style={styles.title}>{userData.firstName} {userData.lastName}</Text>
                         <Feather name="edit-2" size={22} color={COLORS.blue} />
                     </TouchableOpacity>
@@ -264,22 +285,27 @@ const styles = StyleSheet.create({
         height: 50,
         padding: 12,
         elevation: 2,
-      },
-      icon: {
+    },
+    icon: {
         marginRight: 5,
-      },
-      item: {
+    },
+    item: {
         padding: 17,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: COLORS.lightblack,
-      },
-      textItem: {
+    },
+    textItem: {
         flex: 1,
         fontSize: 16,
         color: COLORS.white,
-      },
+    },
+    image: {
+        width: 100,
+        height: 100,
+        borderRadius: 75,
+    },
 });
 
 
