@@ -204,7 +204,7 @@ const AccountScreen = ({navigation}) => {
                     </View>
                     <View style={{flex: 1, flexDirection: "column", alignItems: 'center', borderRightWidth: 1}}>
                         <TouchableOpacity onPress={handleFavoritesClick}>   
-                            <Text style={styles.number}>0</Text>
+                            <Text style={styles.number}>{stats.followers}</Text>
                             <Text style={styles.statName}>Suivi(e)s</Text>
                         </TouchableOpacity>
                     </View>
