@@ -1,12 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from '../assets/colors';
 import FollowButton from './FollowButton'; // Importez le composant FollowButton
+import { Image } from 'expo-image';
+import { API_URL } from '@env';
 
 const OrganizersComponent = ({ organizer, isFollowing, onFollowToggle }) => {
     return (
         <View style={styles.container}>
-            <Image source={organizer.profilePicture } style={styles.profileImage} />
+            <Image source={API_URL + "/images/organizers/" + organizer.pp } style={styles.profileImage} />
             <View style={styles.infoContainer}>
                 <Text style={styles.name}>{organizer.name}</Text>
                 <FollowButton isFollowing={isFollowing} onPress={onFollowToggle} />
