@@ -9,7 +9,6 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { COLORS } from '../../assets/colors';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { set } from 'firebase/database';
 
 const data = [
     { label: 'Paris', value: 'Paris' },

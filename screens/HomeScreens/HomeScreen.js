@@ -81,7 +81,7 @@ const HomeScreen = ({navigation}) => {
                     renderItem={({ item }) => (
                         <OrganizerCard
                             name={item.name}
-                            image={item.image}
+                            image={item.pp}
                             isFollowing={item.isFollowing}
                             onFollowToggle={() => handleFollowToggle(item.id)}  
                         />
