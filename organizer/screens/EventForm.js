@@ -1,24 +1,23 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Modal, Image } from 'react-native';
-import { Entypo } from '@expo/vector-icons'; // Importation de l'icône Entypo
-import { AntDesign } from '@expo/vector-icons'; // Importation de l'icône AntDesign
+import { Entypo, AntDesign } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import ToastBar from '../component/Toastbar';
 import { COLORS } from '../../assets/colors';
-import { useNavigation } from '@react-navigation/native'; // Importation de useNavigation
+import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 
 const EventForm = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState(['', '', '', '', '', '', '', '']);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [numPhases, setNumPhases] = useState(1); // Nombre de phases initial
+  const [numPhases, setNumPhases] = useState(1);
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
-  const [showDatePickerModal, setShowDatePickerModal] = useState(false); // Déplacer le hook useState ici
+  const [showDatePickerModal, setShowDatePickerModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const navigation = useNavigation(); // Obtenir l'objet de navigation
+  const navigation = useNavigation();
 
   const questions = [
     'Nom de l\'événement:',
@@ -30,39 +29,30 @@ const EventForm = () => {
     'Description:',
   ];
 
-  const CustomHeader = ({ title }) => {
-    return (
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBackButton}>
-          <AntDesign name="left" size={27} color={COLORS.orange} />
-        </TouchableOpacity>
-        <Text style={styles.title}>{title}</Text>
-      </View>
-    );
-  };
+  const CustomHeader = ({ title }) => (
+    <View style={styles.header}>
+      <TouchableOpacity onPress={handleBackButton}>
+        <AntDesign name="left" size={27} color={COLORS.orange} />
+      </TouchableOpacity>
+      <Text style={styles.title}>{title}</Text>
+    </View>
+  );
 
-  const handleBackButton = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
-  };
+  const handleBackButton = () => setCurrentQuestionIndex(prevIndex => prevIndex > 0 ? prevIndex - 1 : prevIndex);
 
-  const handleAnswer = (text) => {
-    const updatedAnswers = [...answers];
+  const handleAnswer = (text) => setAnswers(prevAnswers => {
+    const updatedAnswers = [...prevAnswers];
     updatedAnswers[currentQuestionIndex] = text;
-    setAnswers(updatedAnswers);
-  };
+    return updatedAnswers;
+  });
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      if (currentQuestionIndex === 1) {
-        const currentDate = new Date();
-        if (selectedDate < currentDate) {
-          alert('Veuillez choisir une date future.');
-          return;
-        }
+      if (currentQuestionIndex === 1 && selectedDate < new Date()) {
+        alert('Veuillez choisir une date future.');
+        return;
       }
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setCurrentQuestionIndex(prevIndex => prevIndex + 1);
     } 
   };
 
@@ -71,33 +61,20 @@ const EventForm = () => {
     setSelectedDate(currentDate);
     const formattedDate = currentDate.toLocaleDateString('fr-FR');
     handleAnswer(formattedDate);
-    setShowDatePickerModal(false); // Fermer le modal après la sélection de la date
+    setShowDatePickerModal(false);
   };
 
-  const decrementPhases = () => {
-    if (numPhases > 1) {
-      setNumPhases(numPhases - 1);
-    }
-  };
+  const decrementPhases = () => setNumPhases(prevNum => prevNum > 1 ? prevNum - 1 : prevNum);
 
-  const incrementPhases = () => {
-    if (numPhases < 5) {
-      setNumPhases(numPhases + 1);
-    }
-  };
+  const incrementPhases = () => setNumPhases(prevNum => prevNum < 5 ? prevNum + 1 : prevNum);
 
   const handleSubmit = () => {
-    // Vous pouvez ajouter le code pour soumettre les réponses ici
     console.log('Réponses soumises :', answers);
-    // Réinitialisez les réponses et revenez à la première question
     setAnswers(['', '', '', '', '', '', '', '']);
     setCurrentQuestionIndex(0);
-    // Affichez un message de succès ou naviguez vers une autre vue
     setToastMessage('Événement ajouté !'); 
-    setShowToast(true); // Affichez le ToastBar
-    setTimeout(() => {
-      setShowToast(false); // Cachez le ToastBar après 3 secondes
-    }, 3000);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
     navigation.navigate('MyEvents');
   };
 
@@ -115,21 +92,18 @@ const EventForm = () => {
     }
   };
 
-  // Calcul du pourcentage d'avancement
   const progressPercentage = (currentQuestionIndex + 1) / questions.length * 100;
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <CustomHeader title="Ajouter un événement" />
-        {/* Barre de progression */}
         <View style={styles.progressBar}>
           <View style={{ width: `${progressPercentage}%`, backgroundColor: COLORS.orange, height: 5 }} />
         </View>
 
         <View style={styles.inputContainer}>
           <Text style={styles.questionText}>{questions[currentQuestionIndex]}</Text>
-          {/* Le reste du contenu du formulaire */}
           {currentQuestionIndex === 1 ? (
             <>
               <TouchableOpacity style={[styles.input, styles.datePickerContainer]} onPress={() => setShowDatePickerModal(true)}>
@@ -155,13 +129,6 @@ const EventForm = () => {
                 </TouchableWithoutFeedback>
               </Modal>
             </>
-          ) : currentQuestionIndex === questions.length-2 ? (
-            <>
-              <TouchableOpacity style={styles.input} onPress={pickImage}>
-                <Text style={styles.datePickerText}>Choisir une image</Text>
-              </TouchableOpacity>
-              {selectedImage && <Image source={{ uri: selectedImage }} style={{ width: 200, height: 200 }} />}
-            </>
           ) : currentQuestionIndex === 3 ? (
             <View style={styles.numericInput}>
               <TouchableOpacity style={styles.phaseButton} onPress={decrementPhases}>
@@ -172,14 +139,33 @@ const EventForm = () => {
                 <Entypo name="plus" size={24} color="black" /> 
               </TouchableOpacity>
             </View>
-          ) : currentQuestionIndex >= 5 && currentQuestionIndex < questions.length - 1 ? (
-            <TextInput
-              style={[styles.input, answers[currentQuestionIndex] === '' ? styles.emptyInput : null]}
-              value={answers[currentQuestionIndex]}
-              onChangeText={handleAnswer}
-              placeholder="Réponse"
-              placeholderTextColor={COLORS.grey}
-            />
+          ) : currentQuestionIndex >= 4 && currentQuestionIndex < questions.length - 2 ? (
+            <View style={styles.input}>
+              <TextInput
+                style={[
+                  styles.textInput,
+                  answers[currentQuestionIndex] === '' ? styles.emptyInput : null
+                ]}
+                value={answers[currentQuestionIndex]}
+                onChangeText={handleAnswer}
+                placeholder="Réponse"
+                placeholderTextColor={COLORS.grey}
+                keyboardType={'numeric'}
+              />
+              <Text style={styles.currencySymbol}>€</Text>
+            </View>
+          ) : currentQuestionIndex === questions.length-2 ? (
+            <>
+              {selectedImage ? (
+                <View style={styles.imagePreviewContainer}>
+                  <Image source={{ uri: selectedImage }} style={styles.imagePreview} />
+                </View>
+              ) : (
+                <TouchableOpacity style={styles.input} onPress={pickImage}>
+                  <Text style={styles.datePickerText}>Choisir une image</Text>
+                </TouchableOpacity>
+              )}
+            </>
           ) : (
             <TextInput
               style={[styles.input, answers[currentQuestionIndex] === '' ? styles.emptyInput : null]}
@@ -191,15 +177,14 @@ const EventForm = () => {
           )}
         </View>
   
-        {currentQuestionIndex < questions.length - 1 ? (
-          <TouchableOpacity style={styles.button} onPress={handleNextQuestion}>
-            <Text style={styles.buttonText}>Question suivante</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.buttonText}>Ajouter l'événement</Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={currentQuestionIndex < questions.length - 1 ? handleNextQuestion : handleSubmit}
+        >
+          <Text style={styles.buttonText}>
+            {currentQuestionIndex < questions.length - 1 ? 'Question suivante' : 'Ajouter l\'événement'}
+          </Text>
+        </TouchableOpacity>
         {showToast && <ToastBar message={toastMessage} />}
       </View>
     </TouchableWithoutFeedback>
@@ -243,6 +228,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   input: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     height: 50,
     width: '90%',
     marginBottom: 10,
@@ -252,8 +240,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+  },
+  textInput: {
+    flex: 1,
+    color: COLORS.white,
+  },
+  currencySymbol: {
+    color: COLORS.white,
+    fontSize: 20,
+    marginRight: 10,
   },
   emptyInput: {
     borderColor: COLORS.grey,
@@ -313,6 +308,16 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.lightblack,
     borderRadius: 10,
     padding: 20,
+  },
+  imagePreviewContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  imagePreview: {
+    width: 200,
+    height: 200,
+    borderRadius: 5,
   },
 });
 
