@@ -64,17 +64,6 @@ const EventCard = ({ id, eventName, date, location, imageUrl, price, organizer }
             }
         }
         getData();
-        const fetchImage = async () => {
-            try {
-                console.log('Chargement de l\'image:', API_URL + imageUrl)
-                const response = await axios.get(API_URL + imageUrl, { responseType: 'arraybuffer' });
-                setImageData(response.data);
-            } catch (error) {
-                console.error('Erreur lors du chargement de l\'image:', error);
-            }
-        };
-
-        fetchImage();
     }, []);
 
     return (
@@ -84,9 +73,9 @@ const EventCard = ({ id, eventName, date, location, imageUrl, price, organizer }
             ) : (
                 <>
                     <Image
-                        source={{ uri: `data:image/jpeg;base64,${Buffer.from(imageData, 'binary').toString('base64')}` }}
                         style={styles.eventImage}
-                    />
+                        source={{ uri: API_URL + imageUrl }}
+                    /> 
                     <View style={styles.content}>
                         <Text style={styles.eventName}>{eventName}</Text>
                         <Text style={styles.organizer}>{organizer}</Text>

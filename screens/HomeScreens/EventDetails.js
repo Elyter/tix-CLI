@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Share, Alert, Image, Dimensions, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, TouchableOpacity, Share, Alert, Image, Dimensions, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import axios from 'axios';
 import { API_URL } from '@env';
 import { AntDesign, Entypo, Feather, Fontisto } from '@expo/vector-icons';
@@ -18,6 +18,7 @@ const EventDetails = ({route, navigation}) => {
     const [loading, setLoading] = useState(true);
     const [userData, setUserData] = useState({});
     const [liked, setLiked] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
     const likeUpdate = () => {
         axios.post(API_URL + '/likes/' + userData.uid, {
@@ -38,54 +39,55 @@ const EventDetails = ({route, navigation}) => {
 
     useEffect(() => {
         setLoading(true);
-        const getData = async () => {
-            try {
-                const value = await AsyncStorage.getItem('userData');
-                const url = API_URL + '/userData/' + value.replace(/"/g, '')
-                axios.get(url)
-                .then((response) => {
-                    setUserData(response.data);    
-                    const likesUrl = API_URL + '/likes/' + response.data.uid;
-                    axios.get(likesUrl)
-                    .then((likesResponse) => {
-                        likesResponse.data.forEach(element => {
-                            if (element.eventId === id) {
-                                setLiked(true);
-                            }
-                        });
-                    })
-                    .catch((error) => {
-                        if (error.response.status !== 404) {
-                            console.error('Error getting likes data:', error);
+        getData();
+    }, [isFocused]);
+
+    const getData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('userData');
+            const url = API_URL + '/userData/' + value.replace(/"/g, '')
+            axios.get(url)
+            .then((response) => {
+                setUserData(response.data);    
+                const likesUrl = API_URL + '/likes/' + response.data.uid;
+                axios.get(likesUrl)
+                .then((likesResponse) => {
+                    likesResponse.data.forEach(element => {
+                        if (element.eventId === id) {
+                            setLiked(true);
                         }
-                    });
-    
-                    const eventUrl = API_URL + '/events/' + id;
-                    axios.get(eventUrl)
-                    .then((eventResponse) => {
-                        setEvent(eventResponse.data);
-                        axios.get(API_URL + eventResponse.data.imageUrl, { responseType: 'arraybuffer' })
-                        .then((imageResponse) => {
-                            setImageData(imageResponse.data);
-                            setLoading(false);
-                        })
-                        .catch((error) => {
-                            console.error('Error getting image data:', error);
-                        });
-                    })
-                    .catch((error) => {
-                        console.error('Error getting event data:', error);
                     });
                 })
                 .catch((error) => {
-                    console.error('Error getting user data:', error);
+                    if (error.response.status !== 404) {
+                        console.error('Error getting likes data:', error);
+                    }
                 });
-            } catch(e) {
-                console.error('Error reading value:', e);
-            }
+
+                const eventUrl = API_URL + '/events/' + id;
+                axios.get(eventUrl)
+                .then((eventResponse) => {
+                    setEvent(eventResponse.data);
+                    axios.get(API_URL + eventResponse.data.imageUrl, { responseType: 'arraybuffer' })
+                    .then((imageResponse) => {
+                        setImageData(imageResponse.data);
+                        setLoading(false);
+                    })
+                    .catch((error) => {
+                        console.error('Error getting image data:', error);
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error getting event data:', error);
+                });
+            })
+            .catch((error) => {
+                console.error('Error getting user data:', error);
+            });
+        } catch(e) {
+            console.error('Error reading value:', e);
         }
-        getData();
-    }, [isFocused]);
+    }
     
     
     const onShare = async () => {
@@ -100,6 +102,15 @@ const EventDetails = ({route, navigation}) => {
             Alert.alert(error.message);
         }
     };
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        getData();
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 300);
+    }
+        
 
     return (
         <View style={styles.container}>
@@ -125,7 +136,12 @@ const EventDetails = ({route, navigation}) => {
                 </View>
             </View>
             )}
-            <ScrollView style={styles.info}>
+            <ScrollView style={styles.info} refreshControl={
+            <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={COLORS.orange}
+            />}>
                 {loading ? (
                     <ActivityIndicator size="large" color={COLORS.orange} />
                 ) : (

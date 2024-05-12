@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'; // Importez ScrollView
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl } from 'react-native'; // Importez ScrollView
 import EventCard from '../../components/EventCard';
 import SearchBar from '../../components/SearchBar';
 import OrganizerCard from '../../components/OrganizerCard'; // Importez le composant OrganizerCard
@@ -14,8 +14,13 @@ const HomeScreen = ({navigation}) => {
     const [loading, setLoading] = useState(true);
     const [events, setEvents] = useState([]);
     const [organizers, setOrganizers] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
+        getEvents();
+    }, [])
+
+    const getEvents = () => {
         setLoading(true);
         const url = API_URL + '/events/';
         axios.get(url)
@@ -34,7 +39,7 @@ const HomeScreen = ({navigation}) => {
         .catch((error) => {
             console.error('Error getting organizers data:', error);
         });
-    }, [isFocused])
+    }
 
     const handleFollowToggle = (id) => {
         setOrganizers(prevOrganizers => (
@@ -47,12 +52,27 @@ const HomeScreen = ({navigation}) => {
         ));
     };
 
+    const onRefresh = () => {
+        setRefreshing(true);
+        getEvents();
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 300);
+    }
+
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.header}>
                 <SearchBar />
             </View>
             {/* Section: Organisateurs à suivre */}
+            <ScrollView style={styles.container} refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    tintColor={COLORS.orange}
+                />}
+            >
             <View style={styles.section}>
                 <Text style={styles.title}>Organisateurs à suivre</Text>
                 <FlatList
@@ -100,6 +120,7 @@ const HomeScreen = ({navigation}) => {
                 </View>
             )}
         </ScrollView>
+        </View>
     );
 };
 

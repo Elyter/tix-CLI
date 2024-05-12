@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, StyleSheet, Image } from 'react-native';
+import { View, TextInput, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { COLORS } from '../../assets/colors';
 import Button from '../../components/Button';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
+import { API_URL } from '@env';
 
-const EditProfileScreen = () => {
+const EditProfileScreen = ({route, navigation}) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [bio, setBio] = useState('');
     const [selectedImage, setSelectedImage] = useState(null);
+    const { uid } = route.params;
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -21,6 +24,8 @@ const EditProfileScreen = () => {
     }, []);
 
     const pickImage = async () => {
+        setLoading(true);
+
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
@@ -28,67 +33,48 @@ const EditProfileScreen = () => {
             quality: 1,
         });
 
-        console.log(result);
-        
-        const formData = new FormData();
-        // Get the file name without extension
-        const fileName = result.uri.split('/').pop().split('.')[0];
-        formData.append('image', {
-            uri: result.uri,
-            type: 'image/jpeg', // or whatever your image type is
-            name: fileName + '.jpg', // Ensure file name has extension
-        });
-
-        try {
-            const response = await axios.post( API_URL + '/images/users', formData, {
+        if (!result.cancelled) {
+            const formData = new FormData();
+            // Get the file name without extension
+    
+            const fileName = uid
+            console.log('File name:', fileName);
+            formData.append('image', {
+                uri: result.assets[0].uri,
+                type: 'image/jpeg', // or whatever your image type is
+                name: fileName, // Ensure file name has extension
+            });
+    
+            axios.post(API_URL + '/images/users', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     // Add any additional headers here
                 },
+            })
+            .then((response) => {
+                console.log('Image uploaded:', response.data);
+                navigation.navigate('Account');
+                
+            })
+            .catch((error) => {
+                console.error('Error uploading image:', error);
+                setLoading(false);
             });
-            console.log('Image uploaded successfully!', response.data);
-        } catch (error) {
-            console.error('Error uploading image:', error);
         }
-    };
-
-    const handleSaveProfile = () => {
-        console.log('Name:', name);
     };
 
     return (
         <View style={styles.container}>
+            { loading ? ( <ActivityIndicator size="large" color={COLORS.orange} /> ) : (
             <View style={styles.form}>
                 {selectedImage && <Image source={{ uri: selectedImage }} style={{ width: 200, height: 200 }} />}
                 <Button
-                    title="Pick an image from camera roll"
+                    title="Selectionnez une image"
                     onPress={pickImage}
                     style={styles.button}
                 />
-                <TextInput
-                    placeholder="Name"
-                    value={name}
-                    onChangeText={setName}
-                    style={styles.input}
-                />
-                <TextInput
-                    placeholder="Email"
-                    value={email}
-                    onChangeText={setEmail}
-                    style={styles.input}
-                />
-                <TextInput
-                    placeholder="Bio"
-                    value={bio}
-                    onChangeText={setBio}
-                    style={styles.input}
-                />
-                <Button
-                    title="Enregistrer"
-                    onPress={handleSaveProfile}
-                    style={styles.button}
-                />
             </View>
+            )}
         </View>
     );
 };
@@ -97,6 +83,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: COLORS.lightblack,
     },
     input: {
@@ -108,11 +95,6 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         marginBottom: 16,
         backgroundColor: 'white',
-    },
-    button: {
-        backgroundColor: '#007AFF',
-        padding: 12,
-        borderRadius: 4,
     },
     form: {
         flex: 1,

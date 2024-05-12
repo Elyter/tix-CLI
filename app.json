@@ -1,6 +1,8 @@
 {
   "expo": {
-    "plugins": ["expo-apple-authentication"],
+    "plugins": [
+      "expo-apple-authentication"
+    ],
     "name": "tix",
     "slug": "tix",
     "version": "1.0.0",
@@ -17,7 +19,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "usesAppleSignIn": true
+      "usesAppleSignIn": true,
+      "bundleIdentifier": "com.anonymous.tix"
     },
     "android": {
       "adaptiveIcon": {

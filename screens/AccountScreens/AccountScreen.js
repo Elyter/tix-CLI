@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { View, Text, StyleSheet, Image, Switch, TouchableOpacity, Button } from 'react-native';
+import { View, Text, StyleSheet, Switch, TouchableOpacity, RefreshControl, SafeAreaView, ScrollView, ActivityIndicator} from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
@@ -7,7 +7,9 @@ import { API_URL } from '@env';
 import axios from 'axios';
 import { Dropdown } from 'react-native-element-dropdown';
 import { COLORS } from '../../assets/colors';
-import { Buffer, constants } from 'buffer';
+import { Image } from 'expo-image';
+import * as ImagePicker from 'expo-image-picker';
+import { set } from 'firebase/database';
 
 const data = [
     { label: 'Paris', value: 'Paris' },
@@ -28,8 +30,10 @@ const AccountScreen = ({navigation}) => {
     const [value, setValue] = React.useState(data[0].value);
     const [organizer, setOrganizer] = React.useState(false);
     const [ppUri, setPpUri] = React.useState(null);
-
-    const isFocused = useIsFocused();
+    const [refreshing, setRefreshing] = React.useState(false);
+    const [image, setImage] = React.useState(null);
+    const [imageKey, setImageKey] = React.useState(0);
+    const [isLoading, setIsLoading] = React.useState(true);
 
     const changeValue = item => {
         setValue(item);
@@ -43,58 +47,63 @@ const AccountScreen = ({navigation}) => {
 
     const renderItem = item => {
         return (
-          <View style={styles.item}>
+        <View style={styles.item}>
             <Text style={styles.textItem}>{item ? item.label : ""}</Text>
             {item && item.value === value && (
                 <Feather name="check" size={20} color={COLORS.blue} />
             )}
-          </View>
+        </View>
         );
-      };
-          
+    };
+
+    const getData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('userData');
+            if(value === null) {
+                navigation.replace("Login");
+            } else {
+                console.log(value);
+                const url = API_URL + '/userData/' + value.replace(/"/g, '')
+                axios.get(url)
+                .then((response) => {
+                    setUserData(response.data);
+                    setValue(response.data.city);
+                    setImage(API_URL + "/images/users/"+  response.data.pp)
+                    setImageKey(imageKey + 1);
+                    setIsLoading(false);
+                    if (response.data.role === "ORGANIZER") {
+                        setOrganizer(true);
+                    }
+                    console.log(response.data);
+                    // const fetchImage = async () => {
+                    //     try {
+                    //         console.log(userData)
+                    //         console.log('Chargement de l\'image:', API_URL + "/images/users/"+  userData.pp)
+                    //         const response = await axios.get(API_URL + "/images/users/"+ userData.pp, { responseType: 'arraybuffer' });
+                    //         if (response.data === null) {
+                    //             setPpUri(null);
+                    //         }
+                    //         setPpUri(response.data);
+                    //     } catch (error) {
+                    //         console.error('Erreur lors du chargement de l\'image:', error);
+                    //     }
+                    // };
+            
+                    // fetchImage();
+                })
+                .catch((error) => {
+                    console.error('Error getting user data:', error);
+                });
+        }
+        } catch(e) {
+          // error reading value
+        }
+    }
 
     useEffect(() => {
-        const getData = async () => {
-            try {
-                const value = await AsyncStorage.getItem('userData');
-                if(value === null) {
-                    navigation.replace("Login");
-                } else {
-                    const url = API_URL + '/userData/' + value.replace(/"/g, '')
-                    axios.get(url)
-                    .then((response) => {
-                        setUserData(response.data);
-                        setValue(response.data.city);
-                        if (response.data.role === "ORGANIZER") {
-                            setOrganizer(true);
-                        }
-                        console.log(response.data);
-                    })
-                    .catch((error) => {
-                        console.error('Error getting user data:', error);
-                    });
-            }
-            } catch(e) {
-              // error reading value
-            }
-        }
+        setIsLoading(true);
         getData();
-        const fetchImage = async () => {
-            try {
-                console.log(userData)
-                console.log('Chargement de l\'image:', API_URL + userData.pp)
-                const response = await axios.get(API_URL + "/images/users/"+ userData.pp, { responseType: 'arraybuffer' });
-                if (response.data === null) {
-                    setPpUri(null);
-                }
-                setPpUri(response.data);
-            } catch (error) {
-                console.error('Erreur lors du chargement de l\'image:', error);
-            }
-        };
-
-        fetchImage();
-    }, [isFocused])
+    }, [])
 
     const handleDisconnect = () => {
         AsyncStorage.removeItem('userData')
@@ -114,19 +123,75 @@ const AccountScreen = ({navigation}) => {
         navigation.navigate('TicketsNav')
     }
 
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        getData();
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 300);
+    }, []);
+
+    const pickImage = async () => {
+        setIsLoading(true);
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (result.assets !== null) {
+            const formData = new FormData();
+            // Get the file name without extension
+    
+            const fileName = userData.uid
+            formData.append('image', {
+                uri: result.assets[0].uri,
+                type: 'image/jpeg', // or whatever your image type is
+                name: fileName, // Ensure file name has extension
+            });
+    
+            axios.post(API_URL + '/images/users', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    // Add any additional headers here
+                },
+            })
+            .then((response) => {
+                console.log('Image uploaded:', response.data);
+                setImage(API_URL + "/images/users/"+  userData.pp)
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error uploading image:', error);
+                setLoading(false);
+            });
+        } else {
+            setIsLoading(false);
+        }
+    };
+
     return (
-        <View style={styles.container}>
-            <View style={styles.info}>
-                { ppUri ? (
-                    <Image
-                        source={{ uri: `data:image/jpeg;base64,${Buffer.from(ppUri, 'binary').toString('base64')}` }}
-                        style={styles.image}
-                    />                
+        <SafeAreaView style={styles.container}>
+            <ScrollView style={{ width: "100%"}} refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    tintColor={COLORS.blue}
+                />
+            }>
+                <View style={styles.info}>
+                { isLoading ? (
+                    <ActivityIndicator size="large" color={COLORS.blue} />
                 ) : (
-                    <Feather name="user" size={75} color="white" />
+                <Image
+                    style={{ width: 100, height: 100, borderRadius: 75}}
+                    source={{ uri: image}}
+                    cachePolicy={"none"}
+                /> 
                 )}
                 <View style={styles.name}>
-                    <TouchableOpacity style={styles.nameContainer} onPress={() => navigation.navigate("EditProfile")}>
+                    <TouchableOpacity style={styles.nameContainer} onPress={() => pickImage()}>
                         <Text style={styles.title}>{userData.firstName} {userData.lastName}</Text>
                         <Feather name="edit-2" size={22} color={COLORS.blue} />
                     </TouchableOpacity>
@@ -203,8 +268,9 @@ const AccountScreen = ({navigation}) => {
                     </TouchableOpacity>
                     )}
                 </View>
-            </View>
-        </View>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 };
 
@@ -214,6 +280,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         backgroundColor: COLORS.lightblack,
+        width: '100%',
     },
     nameContainer:{
         flexDirection: 'row',
@@ -225,9 +292,11 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     info: {
-        flexDirection: "column",
+        flex: 1,
         alignItems: 'center',
-        marginTop: 40
+        justifyContent: 'center',
+        width: '100%',
+        marginTop: 20
     },
     name: {
         flexDirection: "row",
