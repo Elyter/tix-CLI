@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
 import { COLORS } from '../../assets/colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { API_URL } from '@env';
+import EventCard from '../../components/EventCard';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -47,28 +51,226 @@ const CustomHeader = ({ title }) => {
 };
 
 const UpcomingEventsScreen = () => {
+  const [userData, setUserData] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    getData();
+    setTimeout(() => {
+        setRefreshing(false);
+    }, 300);
+  }
+
+  const getData = async () => {
+    try {
+        const value = await AsyncStorage.getItem('userData');
+        setUserData(value)
+        const url = API_URL + '/organizers/' + value.replace(/"/g, '')
+        axios.get(url)
+        .then((response) => {
+          setUserData(response.data);
+          const eventsUrl = API_URL + '/events/organizer/' + response.data.id + "/upcoming/";
+          axios.get(eventsUrl)
+          .then((eventsResponse) => {
+            console.log('Events:', eventsResponse.data);
+            setEvents(eventsResponse.data);
+          })
+          .catch((error) => {
+            console.error('Error getting user events:', error);
+          });
+        })
+        .catch((error) => {
+            console.error('Error getting user data:', error);
+        });
+    } catch (error) {
+        console.error('Error getting async storage:', error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Événements à venir</Text>
-      {/* Contenu de la section "Événements à venir" */}
+      <FlatList
+          data={events}
+          keyExtractor={(item) => item.id.toString()}
+          refreshControl={
+            <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={COLORS.orange}
+            />
+          }
+          renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => navigation.navigate('EventDetails', { id: item.id })}>
+                  <EventCard
+                      id={item.id}
+                      eventName={item.name}
+                      date={item.date}
+                      location={item.location}
+                      imageUrl={item.imageUrl}
+                      price={item.price}
+                      organizer={item.idOrganizer}
+                  />
+              </TouchableOpacity>
+          )}
+          showsVerticalScrollIndicator={false}
+          style={{ width: '100%' }}
+      />
     </View>
   );
 };
 
 const PastEventsScreen = () => {
+  const [userData, setUserData] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    getData();
+    setTimeout(() => {
+        setRefreshing(false);
+    }, 300);
+  }
+
+  const getData = async () => {
+    try {
+        const value = await AsyncStorage.getItem('userData');
+        setUserData(value)
+        const url = API_URL + '/organizers/' + value.replace(/"/g, '')
+        axios.get(url)
+        .then((response) => {
+          setUserData(response.data);
+          const eventsUrl = API_URL + '/events/organizer/' + response.data.id + "/past/";
+          axios.get(eventsUrl)
+          .then((eventsResponse) => {
+            console.log('Events:', eventsResponse.data);
+            setEvents(eventsResponse.data);
+          })
+          .catch((error) => {
+            console.error('Error getting user events:', error);
+          });
+        })
+        .catch((error) => {
+            console.error('Error getting user data:', error);
+        });
+    } catch (error) {
+        console.error('Error getting async storage:', error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Événements passés</Text>
-      {/* Contenu de la section "Événements passés" */}
+      <FlatList
+          data={events}
+          keyExtractor={(item) => item.id.toString()}
+          refreshControl={
+            <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={COLORS.orange}
+            />
+          }
+          renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => navigation.navigate('EventDetails', { id: item.id })}>
+                  <EventCard
+                      id={item.id}
+                      eventName={item.name}
+                      date={item.date}
+                      location={item.location}
+                      imageUrl={item.imageUrl}
+                      price={item.price}
+                      organizer={item.idOrganizer}
+                  />
+              </TouchableOpacity>
+          )}
+          showsVerticalScrollIndicator={false}
+          style={{ width: '100%' }}
+      />
     </View>
   );
 };
 
-const AllEventsScreen = () => {
+const AllEventsScreen = ({navigation}) => {
+  const [userData, setUserData] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    getData();
+    setTimeout(() => {
+        setRefreshing(false);
+    }, 300);
+  }
+
+  const getData = async () => {
+    try {
+        const value = await AsyncStorage.getItem('userData');
+        setUserData(value)
+        const url = API_URL + '/organizers/' + value.replace(/"/g, '')
+        axios.get(url)
+        .then((response) => {
+          setUserData(response.data);
+          const eventsUrl = API_URL + '/events/organizer/' + response.data.id + "/all/";
+          axios.get(eventsUrl)
+          .then((eventsResponse) => {
+            console.log('Events:', eventsResponse.data);
+            setEvents(eventsResponse.data);
+          })
+          .catch((error) => {
+            console.error('Error getting user events:', error);
+          });
+        })
+        .catch((error) => {
+            console.error('Error getting user data:', error);
+        });
+    } catch (error) {
+        console.error('Error getting async storage:', error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tous mes événements</Text>
-      {/* Contenu de la section "Tous mes événements" */}
+      <FlatList
+          data={events}
+          keyExtractor={(item) => item.id.toString()}
+          refreshControl={
+            <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={COLORS.orange}
+            />
+          }
+          renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => navigation.navigate('EventDetails', { id: item.id })}>
+                  <EventCard
+                      id={item.id}
+                      eventName={item.name}
+                      date={item.date}
+                      location={item.location}
+                      imageUrl={item.imageUrl}
+                      price={item.price}
+                      organizer={item.idOrganizer}
+                  />
+              </TouchableOpacity>
+          )}
+          showsVerticalScrollIndicator={false}
+          style={{ width: '100%' }}
+      />
     </View>
   );
 };

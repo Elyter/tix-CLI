@@ -33,6 +33,7 @@ const AccountScreen = ({navigation}) => {
     const [image, setImage] = React.useState(null);
     const [imageKey, setImageKey] = React.useState(0);
     const [isLoading, setIsLoading] = React.useState(true);
+    const [stats, setStats] = React.useState({});
 
     const changeValue = item => {
         setValue(item);
@@ -74,21 +75,11 @@ const AccountScreen = ({navigation}) => {
                         setOrganizer(true);
                     }
                     console.log(response.data);
-                    // const fetchImage = async () => {
-                    //     try {
-                    //         console.log(userData)
-                    //         console.log('Chargement de l\'image:', API_URL + "/images/users/"+  userData.pp)
-                    //         const response = await axios.get(API_URL + "/images/users/"+ userData.pp, { responseType: 'arraybuffer' });
-                    //         if (response.data === null) {
-                    //             setPpUri(null);
-                    //         }
-                    //         setPpUri(response.data);
-                    //     } catch (error) {
-                    //         console.error('Erreur lors du chargement de l\'image:', error);
-                    //     }
-                    // };
-            
-                    // fetchImage();
+                    const stats = API_URL + '/stats/' + response.data.uid;
+                    axios.get(stats)
+                    .then((statsResponse) => {
+                        setStats(statsResponse.data);
+                    })
                 })
                 .catch((error) => {
                     console.error('Error getting user data:', error);
@@ -149,6 +140,9 @@ const AccountScreen = ({navigation}) => {
                 type: 'image/jpeg', // or whatever your image type is
                 name: fileName, // Ensure file name has extension
             });
+
+            console.log('File name:', fileName);
+            console.log('File uri:', result.assets[0].uri);
     
             axios.post(API_URL + '/images/users', formData, {
                 headers: {
@@ -163,7 +157,7 @@ const AccountScreen = ({navigation}) => {
             })
             .catch((error) => {
                 console.error('Error uploading image:', error);
-                setLoading(false);
+                setIsLoading(false);
             });
         } else {
             setIsLoading(false);
@@ -198,13 +192,13 @@ const AccountScreen = ({navigation}) => {
                 <View style={styles.stats}>
                     <View style={styles.allStat}>
                         <TouchableOpacity onPress={handleFavoritesClick}>
-                            <Text style={styles.number}>0</Text>
+                            <Text style={styles.number}>{stats.likes}</Text>
                             <Text style={styles.statName}>Favoris</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.allStat}>
                         <TouchableOpacity onPress={handleTicketsClick}>      
-                            <Text style={styles.number}>0</Text>
+                            <Text style={styles.number}>{stats.tickets}</Text>
                             <Text style={styles.statName}>MyTix</Text>
                         </TouchableOpacity>
                     </View>

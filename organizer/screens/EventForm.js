@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Modal, Image } from 'react-native';
 import { Entypo, AntDesign } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -6,6 +6,9 @@ import ToastBar from '../component/Toastbar';
 import { COLORS } from '../../assets/colors';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
+import { API_URL } from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const EventForm = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -16,6 +19,8 @@ const EventForm = () => {
   const [showToast, setShowToast] = useState(false);
   const [showDatePickerModal, setShowDatePickerModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [userData, setUserData] = useState('');
+  const [fileName, setFileName] = useState('');
 
   const navigation = useNavigation();
 
@@ -64,31 +69,88 @@ const EventForm = () => {
     setShowDatePickerModal(false);
   };
 
+  useEffect(() => {
+    const getData = async () => {
+      try {
+          const value = await AsyncStorage.getItem('userData');
+          setUserData(value)
+          const url = API_URL + '/organizers/' + value.replace(/"/g, '')
+          axios.get(url)
+          .then((response) => {
+            setUserData(response.data);
+          })
+          .catch((error) => {
+              console.error('Error getting user data:', error);
+          });
+      } catch (error) {
+          console.error('Error getting async storage:', error);
+      }
+    }
+    getData();
+  }, []);
+
   const decrementPhases = () => setNumPhases(prevNum => prevNum > 1 ? prevNum - 1 : prevNum);
 
   const incrementPhases = () => setNumPhases(prevNum => prevNum < 5 ? prevNum + 1 : prevNum);
 
   const handleSubmit = () => {
-    console.log('Réponses soumises :', answers);
-    setAnswers(['', '', '', '', '', '', '', '']);
-    setCurrentQuestionIndex(0);
-    setToastMessage('Événement ajouté !'); 
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
-    navigation.navigate('MyEvents');
+    console.log('Answers:', answers);
+    axios.post(API_URL + '/events', {
+      name: answers[0],
+      date: selectedDate,
+      location: answers[2],
+      price: answers[4],
+      description: answers[7],
+      idOrganizer: userData.id,
+    })
+    .then((response) => {
+      console.log('Réponses soumises :', answers);
+      setAnswers(['', '', '', '', '', '', '', '']);
+      setCurrentQuestionIndex(0);
+      setToastMessage('Événement ajouté !'); 
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      navigation.navigate('MyEvents');
+    })
   };
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
     });
 
-    if (!result.cancelled) {
-      setSelectedImage(result.uri);
-      handleAnswer(result.uri);
+    if (result.assets !== null) {
+
+      setSelectedImage(result.assets[0].uri);
+    //   const formData = new FormData();
+    //   // Get the file name without extension
+
+    //   setFileName(Math.random().toString(36).substring(7));
+    //   formData.append('image', {
+    //       uri: result.assets[0].uri,
+    //       type: 'image/jpeg', // or whatever your image type is
+    //       name: fileName, // Ensure file name has extension
+    //   });
+
+    //   console.log('File name:', fileName);
+    //   console.log('File uri:', result.assets[0].uri);
+
+    //   axios.post(API_URL + '/images/events', formData, {
+    //       headers: {
+    //           'Content-Type': 'multipart/form-data',
+    //           // Add any additional headers here
+    //       },
+    //   })
+    //   .then((response) => {
+    //       console.log('Image uploaded:', response.data);
+    //       setSelectedImage(API_URL + "/images/users/"+  userData.pp)
+    //   })
+    //   .catch((error) => {
+    //       console.error('Error uploading image:', error);
+    //   });
     }
   };
 
@@ -159,6 +221,9 @@ const EventForm = () => {
               {selectedImage ? (
                 <View style={styles.imagePreviewContainer}>
                   <Image source={{ uri: selectedImage }} style={styles.imagePreview} />
+                  <TouchableOpacity style={styles.input} onPress={pickImage}>
+                  <Text style={styles.datePickerText}>Choisir une image</Text>
+                </TouchableOpacity>
                 </View>
               ) : (
                 <TouchableOpacity style={styles.input} onPress={pickImage}>

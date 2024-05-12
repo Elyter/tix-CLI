@@ -12,15 +12,12 @@ const Tab = createMaterialTopTabNavigator();
 const FavoritesScreen = () => {
 
     return (
-        <NavigationContainer independent={true}>
             <Tab.Navigator
                 screenOptions={{
                     tabBarLabelStyle: { 
                         fontWeight: 'bold',
                         width: 150,
-                 },
-
-
+                    }
                 }}
                 tabBarOptions={{
                     style: { backgroundColor: COLORS.darkblack }, // Fond noir
@@ -34,7 +31,6 @@ const FavoritesScreen = () => {
                 <Tab.Screen name="Organisateurs" component={OrganizersScreen} />
                 <Tab.Screen name="Collections" component={CollectionsScreen} />
             </Tab.Navigator>
-        </NavigationContainer>
     );
 };
 

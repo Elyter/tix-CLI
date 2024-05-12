@@ -104,21 +104,7 @@ const EventDetails = ({route, navigation}) => {
             setRefreshing(false);
         }, 300);
     }
-
-    const handleBuyTicket = () => {
-        axios.post(API_URL + '/tickets/' + userData.uid + "/" + id)
-        .then((response) => {
-            console.log('Ticket:', response.data);
-            navigation.navigate('BuyedTicket', { ticket: response.data })
-        })
-        .catch((error) => {
-            if (error.response.status === 404) {
-                alert('Billet déjà acheté');
-            } else {
-                console.error('Error getting ticket:', error);
-            }
-        });
-    }   
+        
 
     return (
         <View style={styles.container}>
@@ -150,16 +136,14 @@ const EventDetails = ({route, navigation}) => {
                 onRefresh={onRefresh}
                 tintColor={COLORS.orange}
             />}>
-                
                 {loading ? (
                     <ActivityIndicator size="large" color={COLORS.orange} />
                 ) : (
-                <View>
-                    <Image
-                        style={styles.eventImage}
-                        source={{ uri: API_URL + "/images/events/" + id + ".jpeg" }}
-                    />
                     <View>
+                        <Image
+                            style={styles.eventImage}
+                            source={{ uri: API_URL + event.imageUrl }}
+                        />
                         <View style={styles.tagContainer}>
                             <View style={styles.tag}>
                                 <Text style={{fontSize: 16, color: COLORS.white, fontWeight: 'bold', padding: 2}}>Popular</Text>
@@ -177,19 +161,8 @@ const EventDetails = ({route, navigation}) => {
                             <Text style={{color: COLORS.white, fontSize: 20, fontWeight: 'bold', marginLeft: 30, marginTop: 3, marginBottom: 20}}>{event.location}</Text>
                         </View>
                     </View>
-                    </View>
                 )}
             </ScrollView>
-            {loading ? (
-                    <ActivityIndicator size="large" color={COLORS.orange} />
-                ) : (
-            <View style={styles.ticketContainer}>
-                <Text style={{color: COLORS.white, fontSize: 30, fontWeight: 'bold', marginTop: 5}}>{event.price} €</Text>
-                <TouchableOpacity style={{backgroundColor: COLORS.orange, padding: 10, marginLeft: 50, borderRadius: 4}} onPress={handleBuyTicket}>
-                    <Text style={{color: COLORS.white, fontWeight: 'bold', fontSize: 20}}>Acheter un billet</Text>
-                </TouchableOpacity>
-            </View>
-            )}
         </View>
     );
 };

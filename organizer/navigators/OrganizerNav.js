@@ -4,7 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import AddEvent from '../screens/EventForm';
 import { AntDesign } from '@expo/vector-icons';
 import { COLORS } from '../../assets/colors.js';
-import MyEvents from '../screens/MyEvents.js'; // Assurez-vous que le chemin est correct
+import EventNav from '../navigators/EventsNav.js';
 import ProfileNav from '../navigators/ProfileNav.js'; // Assurez-vous que le chemin est correct
 
 const Tab = createBottomTabNavigator();
@@ -25,7 +25,7 @@ const OrganizerNav = ({ navigation }) => {
       >
       <Tab.Screen
         name="MyEvents"
-        component={MyEvents}
+        component={EventNav}
         options={{
             tabBarIcon: ({size, color}) => (
               <AntDesign name="calendar" size={24} color={color} />

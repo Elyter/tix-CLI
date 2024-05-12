@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { COLORS } from '../assets/colors';
 import HeartButton from './HeartButton'; // Importez le composant HeartButton
 import axios from 'axios';
 import { API_URL } from '@env';
 import { Buffer } from "buffer";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Image } from 'expo-image';
 
 const EventCard = ({ id, eventName, date, location, imageUrl, price, organizer }) => {
     const [imageData, setImageData] = useState(null);

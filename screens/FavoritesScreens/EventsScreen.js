@@ -70,7 +70,7 @@ const EventsScreen = ({navigation}) => {
                         data={events}
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({ item }) => (
-                            <TouchableOpacity onPress={() => alert("j'ai vriller")}>
+                            <TouchableOpacity onPress={() => navigation.navigate("EventDetails", {id: item.id})}>
                                 <EventCard
                                     id={item.id}
                                     eventName={item.name}
