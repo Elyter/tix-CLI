@@ -106,14 +106,13 @@ const EventDetails = ({route, navigation}) => {
     }
         
     const handleBuyTicket = () => {
-        console.log(API_URL + '/ticket/' + userData.uid + "/" + id);
         axios.post(API_URL + '/tickets/' + userData.uid + "/" + id)
         .then((response) => {
             console.log('Ticket:', response.data);
             navigation.navigate('BuyedTicket', { ticket: response.data })
         })
         .catch((error) => {
-            if (error.response.status === 404) {
+            if (error.response.status === 400) {
                 alert('Billet déjà acheté');
             } else {
                 console.error('Error getting ticket:', error);

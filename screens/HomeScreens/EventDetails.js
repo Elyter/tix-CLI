@@ -112,7 +112,7 @@ const EventDetails = ({route, navigation}) => {
             navigation.navigate('BuyedTicket', { ticket: response.data })
         })
         .catch((error) => {
-            if (error.response.status === 404) {
+            if (error.response.status === 400) {
                 alert('Billet déjà acheté');
             } else {
                 console.error('Error getting ticket:', error);
