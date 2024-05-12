@@ -5,7 +5,7 @@ import { COLORS } from '../../assets/colors';
 const CollectionsScreen = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Collections</Text>
+            <Text style={styles.title}>Des événements sélectionnés pour vous par nos experts, en un seul endroit.</Text>
             {/* Contenu spécifique à l'onglet Collections */}
         </View>
     );
@@ -19,8 +19,9 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.lightblack, // Fond noir
     },
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: 16,
+        color: COLORS.grey, // Texte orange
+        paddingHorizontal: 20,
     },
 });
 
