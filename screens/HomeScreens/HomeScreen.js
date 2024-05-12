@@ -15,10 +15,35 @@ const HomeScreen = ({navigation}) => {
     const [events, setEvents] = useState([]);
     const [organizers, setOrganizers] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
+    const [userData, setUserData] = useState({});
 
     useEffect(() => {
         getEvents();
+        getData();
     }, [])
+
+    const getData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('userData');
+            const url = API_URL + '/userData/' + value.replace(/"/g, '')
+            axios.get(url)
+            .then((response) => {
+                setUserData(response.data);    
+                const likesUrl = API_URL + '/likes/' + response.data.uid;
+                axios.get(likesUrl)
+                .then((likesResponse) => {
+                    likesResponse.data.forEach(element => {
+                        if (element.eventId === id) {
+                            setLiked(true);
+                        }
+                    });
+                    setLoading(false);
+                })
+            })
+        } catch (error) {
+            console.error('Error getting user data:', error);
+        }
+    }
 
     const getEvents = () => {
         setLoading(true);
@@ -84,7 +109,7 @@ const HomeScreen = ({navigation}) => {
                             name={item.name}
                             image={item.pp}
                             isFollowing={item.isFollowing}
-                            onFollowToggle={() => handleFollowToggle(item.id)}  
+                            id={item.id}
                         />
                     )}
                     horizontal
