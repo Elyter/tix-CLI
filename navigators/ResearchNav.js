@@ -7,7 +7,9 @@ const Stack = createStackNavigator();
 export default function ResearchNav() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Research" component={ResearchScreen} />
+      <Stack.Screen name="Research" component={ResearchScreen} options={{
+        headerShown: false
+      }}/>
     </Stack.Navigator>
   );
 }

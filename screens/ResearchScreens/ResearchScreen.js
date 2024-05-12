@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import SearchBar from '../../components/SearchBar'; // Assurez-vous que le chemin du composant SearchBar est correct
+import { COLORS } from '../../assets/colors';
 
 const ResearchScreen = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Welcome to the Research Screen!</Text>
-            {/* Add your content here */}
+            <SearchBar style={styles.searchBar} />
         </View>
     );
 };
@@ -15,11 +16,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: COLORS.lightblack,
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
+    searchBar: {
+        width: '80%', // Vous pouvez ajuster la largeur selon vos besoins
+        // Ajoutez d'autres styles pour le searchBar si nécessaire
     },
 });
 
