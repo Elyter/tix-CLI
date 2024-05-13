@@ -22,7 +22,8 @@ const OrganizersComponent = ({ organizer }) => {
             axios.get(url)
             .then((response) => {
                 setUserData(response.data);
-                axios.get(API_URL + '/follows/following/' + userData.uid)
+                console.log(API_URL + '/follows/following/' + response.data.uid);
+                axios.get(API_URL + '/follows/following/' + response.data.uid)
                 .then((response) => {
                     console.log('Follows:', response.data);
                     for (let i = 0; i < response.data.length; i++) {
