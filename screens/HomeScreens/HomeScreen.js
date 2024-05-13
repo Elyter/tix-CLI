@@ -89,7 +89,7 @@ const HomeScreen = ({navigation}) => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.PrincipalTitle}>Tix</Text>
-                <SearchBar />
+                <SearchBar style={styles.SearchBar}/>
             </View>
             {/* Section: Organisateurs à suivre */}
             <ScrollView style={styles.container} refreshControl={
@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
     section: {
         marginTop: 20,
     },
+    
     title: {
         fontSize: 18,
         fontWeight: 'bold',
