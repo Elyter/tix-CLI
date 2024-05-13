@@ -35,6 +35,8 @@ const AccountScreen = ({navigation, route}) => {
     const [isLoading, setIsLoading] = React.useState(true);
     const [stats, setStats] = React.useState({});
 
+    const isFocused = useIsFocused();
+
     const createdAccount = route.params;
 
     if (createdAccount) {
@@ -99,7 +101,7 @@ const AccountScreen = ({navigation, route}) => {
     useEffect(() => {
         setIsLoading(true);
         getData();
-    }, [])
+    }, [isFocused])
 
     const handleDisconnect = () => {
         AsyncStorage.removeItem('userData')

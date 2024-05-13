@@ -5,6 +5,7 @@ import EventCard from '../../components/EventCard';
 import axios from 'axios';
 import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused } from '@react-navigation/native';
 
 
 const EventsScreen = ({navigation}) => {
@@ -12,6 +13,8 @@ const EventsScreen = ({navigation}) => {
     const [userData, setUserData] = useState();
     const [events, setEvents] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
+
+    const isFocused = useIsFocused();
 
     const onRefresh = () => {
         setRefreshing(true);
@@ -26,7 +29,7 @@ const EventsScreen = ({navigation}) => {
         setLoading(true);
         
         getData();
-    }, []); // Empty dependency array to trigger useEffect only once
+    }, [isFocused]); // Empty dependency array to trigger useEffect only once
 
     const getData = async () => {
         setEvents([]);
