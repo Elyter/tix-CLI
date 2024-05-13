@@ -4,22 +4,21 @@ import { COLORS } from '../../assets/colors';
 
 const ResearchScreen = () => {
     const [searchText, setSearchText] = useState('');
-    const [sortOption, setSortOption] = useState('Prix croissant');
+    const [isChecked, setIsChecked] = useState(false); // État pour suivre si le bouton est coché
 
     const handleSearch = (text) => {
         setSearchText(text);
         // Ajoutez ici la logique pour filtrer en fonction du texte de recherche
     };
 
-    const handleSortOptionChange = () => {
-        if (sortOption === 'Trier : Prix croissant') {
-            setSortOption('Trier : Prix décroissant');
-        } else if (sortOption === 'Trier : Prix décroissant') {
-            setSortOption('tri : Désactivé');
-        } else {
-            setSortOption('Trier : Prix croissant');
+    const handleCheckboxPress = () => {
+        setIsChecked(!isChecked); // Inverser l'état du carré à cocher
+    };
+
+    const handleSortButtonPress = () => {
+        if (isChecked) { // Si le carré à cocher est coché, permettre à l'utilisateur de changer l'état du bouton
+            // Ajouter ici la logique pour changer l'état du bouton
         }
-        // Ajoutez ici la logique pour trier en fonction de l'option sélectionnée
     };
 
     return (
@@ -34,12 +33,19 @@ const ResearchScreen = () => {
                         onChangeText={handleSearch}
                     />
                 </View>
-                <View style={styles.sortButtonContainer}>
+                <View style={styles.buttonContainer}>
                     <TouchableOpacity
-                        style={styles.sortButton}
-                        onPress={handleSortOptionChange}
+                        style={styles.checkbox}
+                        onPress={handleCheckboxPress}
                     >
-                        <Text style={styles.sortButtonText}>{sortOption}</Text>
+                        <View style={[styles.checkboxInner, isChecked && styles.checkboxCheckedInner]} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.sortButton, isChecked && styles.sortButtonChecked]}
+                        onPress={handleSortButtonPress}
+                        activeOpacity={isChecked ? 1 : 0} // Désactiver l'opacité si le bouton n'est pas coché
+                    >
+                        <Text style={[styles.sortButtonText, isChecked && styles.sortButtonTextChecked]}>Prix croissant</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -75,23 +81,38 @@ const styles = StyleSheet.create({
     },
     searchInput: {
         color: 'white',
-        flex: 1,
-    },
-    sortButtonContainer: {
-        width: '100%', // Assurer que le conteneur occupe toute la largeur
-        alignItems: 'flex-end', // Aligner le bouton à droite
+        flex:  1,
     },
     sortButton: {
-        backgroundColor: COLORS.orange,
+        flexDirection: 'row', // Aligner le texte et le carré à cocher horizontalement
+        alignItems: 'center', // Centrer les éléments verticalement
+        backgroundColor: COLORS.orange, // Couleur de fond du bouton
         borderRadius: 20,
         paddingHorizontal: 15,
         paddingVertical: 8,
-        width: 180, // Largeur fixe du bouton
+    },
+    sortButtonChecked: {
+        backgroundColor: COLORS.green, // Couleur de fond du bouton lorsque coché
     },
     sortButtonText: {
         color: COLORS.darkblack,
         fontSize: 14,
         fontWeight: '500',
+        marginLeft: 8, // Ajouter une marge entre le carré à cocher et le texte
+    },
+    sortButtonTextChecked: {
+        color: COLORS.white, // Couleur du texte lorsque le bouton est coché
+    },
+    checkbox: {
+        width: 20,
+        height: 20,
+        borderWidth: 1,
+        borderColor: COLORS.grey,
+        borderRadius: 4,
+    },
+    checkboxChecked: {
+        backgroundColor: COLORS.orange, // Couleur du carré à cocher lorsque coché
+        borderColor: COLORS.orange, // Couleur de la bordure du carré à cocher lorsque coché
     },
 });
 
