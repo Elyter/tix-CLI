@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';import { COLORS } from '../../assets/colors';
+import { View, StyleSheet, TouchableOpacity, Text, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { COLORS } from '../../assets/colors';
 
 const ResearchScreen = () => {
     const [searchText, setSearchText] = useState('');
-    const [isChecked, setIsChecked] = useState(false); 
+    const [isChecked, setIsChecked] = useState(false);
     const [priceAscChecked, setPriceAscChecked] = useState(false);
     const [priceDescChecked, setPriceDescChecked] = useState(false);
     const [dateChecked, setDateChecked] = useState(false);
@@ -14,29 +15,35 @@ const ResearchScreen = () => {
     };
 
     const handleCheckboxPress = () => {
-        setIsChecked(!isChecked); 
+        setIsChecked(!isChecked);
+        // Désactiver les autres boutons
+        setPriceAscChecked(false);
+        setPriceDescChecked(false);
+        setDateChecked(false);
     };
 
     const handlePriceAscPress = () => {
-        if (!priceAscChecked) {
-            setPriceAscChecked(true);
-            setPriceDescChecked(false); // Désactiver l'autre bouton
-        } else {
-            setPriceAscChecked(false);
-        }
+        setPriceAscChecked(!priceAscChecked);
+        // Désactiver les autres boutons
+        setIsChecked(false);
+        setPriceDescChecked(false);
+        setDateChecked(false);
     };
 
     const handlePriceDescPress = () => {
-        if (!priceDescChecked) {
-            setPriceDescChecked(true);
-            setPriceAscChecked(false); // Désactiver l'autre bouton
-        } else {
-            setPriceDescChecked(false);
-        }
+        setPriceDescChecked(!priceDescChecked);
+        // Désactiver les autres boutons
+        setIsChecked(false);
+        setPriceAscChecked(false);
+        setDateChecked(false);
     };
 
     const handleDatePress = () => {
         setDateChecked(!dateChecked);
+        // Désactiver les autres boutons
+        setIsChecked(false);
+        setPriceAscChecked(false);
+        setPriceDescChecked(false);
     };
 
     return (
@@ -73,6 +80,7 @@ const ResearchScreen = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
+                <Text>Mets tous les articles ici : </Text>
                 {/* Ajoutez le reste de votre contenu de recherche ici */}
             </View>
         </TouchableWithoutFeedback>
@@ -106,7 +114,7 @@ const styles = StyleSheet.create({
     },
     searchInput: {
         color: 'white',
-        flex:  1,
+        flex: 1,
     },
     buttonContainer: {
         flexDirection: 'row',
