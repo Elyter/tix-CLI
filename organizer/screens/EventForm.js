@@ -99,8 +99,8 @@ const EventForm = () => {
         name: answers[0],
         date: selectedDate,
         location: answers[2],
-        price: 1,
-        description: answers[7],
+        price: answers[4],
+        description: answers[6],
         idOrganizer: userData.id,
       });
 

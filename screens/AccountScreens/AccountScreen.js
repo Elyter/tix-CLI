@@ -23,7 +23,7 @@ const data = [
     { label: 'Lille', value: 'Lille' },
 ];
 
-const AccountScreen = ({navigation}) => {
+const AccountScreen = ({navigation, route}) => {
     const [isEnabled, setIsEnabled] = React.useState(false);
     const [userData, setUserData] = React.useState({});
     const [value, setValue] = React.useState(data[0].value);
@@ -34,6 +34,12 @@ const AccountScreen = ({navigation}) => {
     const [imageKey, setImageKey] = React.useState(0);
     const [isLoading, setIsLoading] = React.useState(true);
     const [stats, setStats] = React.useState({});
+
+    const createdAccount = route.params;
+
+    if (createdAccount) {
+        setOrganizer(false);
+    }
 
     const changeValue = item => {
         setValue(item);
@@ -121,6 +127,14 @@ const AccountScreen = ({navigation}) => {
             setRefreshing(false);
         }, 300);
     }, []);
+
+    const handleOrganizerClick = () => {
+        if (userData.role === "ORGANIZER"){
+            navigation.navigate('OrganizerNav');
+        } else {
+            navigation.navigate('BecomeOrga');
+        }
+    }
 
     const pickImage = async () => {
         setIsLoading(true);
@@ -253,12 +267,12 @@ const AccountScreen = ({navigation}) => {
                         <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
                     </TouchableOpacity>
                     {organizer ? (
-                    <TouchableOpacity style={styles.param} onPress={() => navigation.replace("OrganizerNav")}>
+                    <TouchableOpacity style={styles.param} onPress={handleOrganizerClick}>
                         <Text style={styles.paramText}>Passer au mode organisteur</Text>
                         <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
                     </TouchableOpacity>
                     ) : (
-                    <TouchableOpacity style={styles.param} onPress={() => navigation.replace("OrganizerNav")}>
+                    <TouchableOpacity style={styles.param} onPress={handleOrganizerClick}>
                         <Text style={styles.paramText}>Devenir organisateur</Text>
                         <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
                     </TouchableOpacity>
