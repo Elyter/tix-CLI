@@ -6,6 +6,7 @@ import OrganizerCard from '../../components/OrganizerCard'; // Importez le compo
 import { useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
 import { API_URL } from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { COLORS } from '../../assets/colors';
 
@@ -140,7 +141,7 @@ const HomeScreen = ({navigation}) => {
                                     location={item.location}
                                     imageUrl={item.imageUrl}
                                     price={item.price}
-                                    organizer={item.idOrganizer}
+                                    organizer={item.organizerName}
                                 />
                             </TouchableOpacity>
                         )}

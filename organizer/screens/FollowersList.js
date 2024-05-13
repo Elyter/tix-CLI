@@ -1,36 +1,58 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { COLORS } from '../../assets/colors'; // Importez vos couleurs depuis votre fichier de couleurs
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import { API_URL } from '@env';
+import { Image } from 'expo-image';
 
-const FollowersList = () => {
+const FollowersList = ({ route }) => {
   const navigation = useNavigation(); // Hook de navigation
+  const [followers, setFollowers] = useState([]); // Initialiser l'état des followers à une liste vide
+  const [loading, setLoading] = useState(true); // Initialiser l'état de chargement à vrai
+  const [refreshing, setRefreshing] = useState(false); // Initialiser l'état de rafraîchissement à faux
 
-  // Mock data for followers
-  const followersData = [
-    { id: '1', username: 'user1', profileImage: require('../../assets/images/elyter.jpg') },
-    { id: '2', username: 'user2', profileImage: require('../../assets/images/salim.jpg') },
-    { id: '3', username: 'user3', profileImage: require('../../assets/images/elyter.jpg') },
-    { id: '4', username: 'user4', profileImage: require('../../assets/images/elyter.jpg') },
-    { id: '5', username: 'user5', profileImage: require('../../assets/images/elyter.jpg') },
-    { id: '6', username: 'user6', profileImage: require('../../assets/images/salim.jpg') },
-    { id: '7', username: 'user7', profileImage: require('../../assets/images/elyter.jpg') },
-    { id: '8', username: 'user8', profileImage: require('../../assets/images/salim.jpg') },
-    { id: '9', username: 'user9', profileImage: require('../../assets/images/salim.jpg') },
-    { id: '10', username: 'user10', profileImage: require('../../assets/images/elyter.jpg') },
-  ];
+  const { userId } = route.params; // Récupérer les paramètres de la route
+
+  useEffect(() => {
+    setLoading(true); // Afficher l'indicateur de chargement
+    getFollowers(); // Appeler la fonction getFollowers() lors du premier rendu
+    setLoading(false); // Masquer l'indicateur de chargement
+  });
+
+  const getFollowers = () => {
+    axios.get(API_URL + '/follows/followers/' + userId)
+    .then((response) => {
+      setFollowers(response.data);
+    })
+    .catch((error) => {
+      console.error('Error getting followers:', error);
+    });
+  }
+
+  const onRefresh = () => {
+    setRefreshing(true); // Afficher l'indicateur de rafraîchissement
+    getFollowers(); // Appeler la fonction getFollowers()
+    setTimeout(() => {
+      setRefreshing(false); // Masquer l'indicateur de rafraîchissement
+    }, 300);
+  }
   
   // Render item for FlatList
   const renderItem = ({ item }) => (
     <View style={styles.item}>
-      <Image source={item.profileImage} style={styles.profileImage} />
-      <Text style={styles.title}>{item.username}</Text>
+      <Image source={API_URL + "/images/users/" + item.pp} style={styles.profileImage} />
+      <Text style={styles.title}>{item.lastName} {item.firstName}</Text>
     </View>
   );
 
   return (
     <View style={styles.container}>
+      {loading ? (
+        <ActivityIndicator size="large" color={COLORS.orange} />
+      ) : (
+      <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconContainer}>
         <AntDesign name="left" size={27} color={COLORS.orange} />
       </TouchableOpacity>
@@ -39,10 +61,19 @@ const FollowersList = () => {
         <View style={styles.separator}></View>
       </View>
       <FlatList
-        data={followersData}
+        data={followers}
         renderItem={renderItem}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={COLORS.orange}
+          />
+        }
         keyExtractor={item => item.id}
       />
+      </View>
+    )}
     </View>
   );
 };

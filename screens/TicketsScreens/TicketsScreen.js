@@ -118,7 +118,7 @@ const UpcomingTicketsScreen = ({ navigation }) => {
                       location={item.location}
                       imageUrl={item.imageUrl}
                       price={item.price}
-                      organizer={item.idOrganizer}
+                      organizer={item.organizerName}
                   />
               </TouchableOpacity>
           )}
@@ -203,7 +203,7 @@ const PastTicketsScreen = ({ navigation }) => {
                       location={item.location}
                       imageUrl={item.imageUrl}
                       price={item.price}
-                      organizer={item.idOrganizer}
+                      organizer={item.organizerName}
                   />
               </TouchableOpacity>
           )}

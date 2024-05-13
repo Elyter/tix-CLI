@@ -1,11 +1,65 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from '../assets/colors';
 import FollowButton from './FollowButton'; // Importez le composant FollowButton
 import { Image } from 'expo-image';
 import { API_URL } from '@env';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const OrganizersComponent = ({ organizer, isFollowing, onFollowToggle }) => {
+const OrganizersComponent = ({ organizer }) => {
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [userData, setUserData] = useState({});
+
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const getData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('userData');
+            const url = API_URL + '/userData/' + value.replace(/"/g, '')
+            axios.get(url)
+            .then((response) => {
+                setUserData(response.data);
+                axios.get(API_URL + '/follows/following/' + userData.uid)
+                .then((response) => {
+                    console.log('Follows:', response.data);
+                    for (let i = 0; i < response.data.length; i++) {
+                        if (response.data[i].id === organizer.id) {
+                            setIsFollowing(true);
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error getting follow:', error);
+                });
+            })
+            .catch((error) => {
+                console.error('Error getting user data:', error);
+            });
+        }
+        catch(e) {
+            console.error('Error getting userData:', e);
+        }
+    }
+
+    const onFollowToggle = () => {
+        axios.post(API_URL + '/follows/' + userData.uid + "/" + organizer.id)
+        .then((response) => {
+            if (response.data.message === "Follow effectué") {
+                console.log('Follow added:', response.data);
+                setIsFollowing(true);
+            } else {
+                console.log('Follow deleted:', response.data);
+                setIsFollowing(false);
+            }
+        })
+        .catch((error) => {
+            console.error('Error adding follow:', error);
+        });
+    }
+
     return (
         <View style={styles.container}>
             <Image source={API_URL + "/images/organizers/" + organizer.pp } style={styles.profileImage} />

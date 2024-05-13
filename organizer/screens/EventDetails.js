@@ -150,7 +150,7 @@ const EventDetails = ({route, navigation}) => {
                             </View>
                         </View>
                         <Text style={styles.title}>{event.name}</Text>
-                        <Text>{event.idOrganizer}</Text>
+                        <Text style={styles.organizerName}>{event.organizerName}</Text>
                         <Text style={{color: COLORS.white, fontSize: 16, marginTop: 10}}>{event.description}</Text>
                         <View style={styles.dateContainer}>
                             <Fontisto name="date" size={30} color={COLORS.orange} />
@@ -226,6 +226,12 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         marginTop: 15,
     },    
+    organizerName: {
+        fontSize: 18,
+        color: COLORS.orange,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
 });
 
 export default EventDetails;

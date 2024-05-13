@@ -115,6 +115,7 @@ const AccountScreen = ({navigation}) => {
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
+        setIsLoading(true);
         getData();
         setTimeout(() => {
             setRefreshing(false);
@@ -176,6 +177,8 @@ const AccountScreen = ({navigation}) => {
                 <View style={styles.info}>
                 { isLoading ? (
                     <ActivityIndicator size="large" color={COLORS.blue} />
+                ) : !image ? (
+                    <Feather name="user" size={100} color={COLORS.blue} />
                 ) : (
                 <Image
                     style={{ width: 100, height: 100, borderRadius: 75}}

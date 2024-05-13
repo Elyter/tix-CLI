@@ -114,7 +114,7 @@ const UpcomingEventsScreen = () => {
                       location={item.location}
                       imageUrl={item.imageUrl}
                       price={item.price}
-                      organizer={item.idOrganizer}
+                      organizer={item.organizerName}
                   />
               </TouchableOpacity>
           )}
@@ -189,7 +189,7 @@ const PastEventsScreen = () => {
                       location={item.location}
                       imageUrl={item.imageUrl}
                       price={item.price}
-                      organizer={item.idOrganizer}
+                      organizer={item.organizerName}
                   />
               </TouchableOpacity>
           )}
@@ -264,7 +264,7 @@ const AllEventsScreen = ({navigation}) => {
                       location={item.location}
                       imageUrl={item.imageUrl}
                       price={item.price}
-                      organizer={item.idOrganizer}
+                      organizer={item.organizerName}
                   />
               </TouchableOpacity>
           )}

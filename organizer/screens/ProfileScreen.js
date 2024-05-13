@@ -31,6 +31,7 @@ const AccountScreen = ({ navigation }) => {
     const [image, setImage] = useState('');
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [followers, setFollowers] = useState(0);
 
     const isFocused = useIsFocused();
 
@@ -47,8 +48,15 @@ const AccountScreen = ({ navigation }) => {
                         setUserData(response.data);
                         setValue(response.data.city);
                         setImage(API_URL + "/images/organizers/"+  response.data.pp)
-                        setLoading(false);
-                        console.log(response.data);
+                        axios.get(API_URL + '/stats/followers/' + response.data.id)
+                        .then((response) => {
+                            setFollowers(response.data.followers)
+                            setLoading(false);
+                            console.log(response.data);
+                        })
+                        .catch((error) => {
+                            console.error('Error getting followers:', error);
+                        });
                     })
                     .catch((error) => {
                         console.error('Error getting user data:', error);
@@ -74,7 +82,7 @@ const AccountScreen = ({ navigation }) => {
     };
 
     const handleFollowersClick = () => {
-        navigation.navigate('Followers');
+        navigation.navigate('Followers', {userId: userData.id});
     }
 
     const changeValue = item => {
@@ -163,7 +171,7 @@ const AccountScreen = ({ navigation }) => {
                 <View style={styles.stats}>
                     <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', borderRightWidth: 1 }}>
                         <TouchableOpacity onPress={handleFollowersClick} >
-                            <Text style={styles.number}>0</Text>
+                            <Text style={styles.number}>{followers}</Text>
                             <Text style={styles.statName}>Followers</Text>
                         </TouchableOpacity>
                     </View>

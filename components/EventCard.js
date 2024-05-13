@@ -128,11 +128,12 @@ const styles = StyleSheet.create({
     },
     location: {
         color: COLORS.white,
-        fontWeight: '700',
+        fontSize: 14,
     },
     date: {
         color: COLORS.white,
-        fontWeight: '700',
+        fontWeight: '600',
+        marginBottom: 5,
     },
     price: {
         position: 'absolute',

@@ -21,31 +21,6 @@ const OrganizersScreen = () => {
 
     const isFocused = useIsFocused();
 
-    // Fonction pour basculer l'état d'abonnement
-    const handleFollowToggle = async (id) => {
-        try {
-            const userData = await AsyncStorage.getItem('userData');
-            uid = userData.replace(/"/g, '');
-            console.log(API_URL + '/follows/' + uid + "/" + id)
-            axios.post(API_URL + '/follows/' + uid + "/" + id)
-                .then((response) => {
-                    if (response.data.message === "Follow effectué") {
-                        console.log('Follow added:', response.data);
-                        setLoading(true);
-                        getFollow();
-                    } else {
-                        console.log('Follow removed:', response.data);
-                        setLoading(true);
-                        getFollow();
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error following organizer:', error);
-                });
-            } catch (error) {
-                console.error('Error getting async storage:', error);
-            }
-    };
 
     const getFollow = async () => {
         try {
@@ -59,8 +34,8 @@ const OrganizersScreen = () => {
                     setLoading(false);
                 })
                 .catch((error) => {
-                    setLoading(false);
                     console.error('Error getting following:', error);
+                    setOrganizers([]);
                 });
         } catch (error) {
             console.error('Error getting async storage:', error);

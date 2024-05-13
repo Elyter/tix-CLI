@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
 
 import { COLORS } from '../../assets/colors';
+import OrganizersComponent from '../../components/OrganizersComponent';
 
 const EventDetails = ({route, navigation}) => {
     const { id } = route.params;
@@ -20,6 +21,7 @@ const EventDetails = ({route, navigation}) => {
     const [userData, setUserData] = useState({});
     const [liked, setLiked] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+    const [organizer, setOrganizer] = useState({});
 
     const likeUpdate = () => {
         axios.post(API_URL + '/likes/' + userData.uid, {
@@ -69,6 +71,12 @@ const EventDetails = ({route, navigation}) => {
                 axios.get(eventUrl)
                 .then((eventResponse) => {
                     setEvent(eventResponse.data);
+                    const organizer = {
+                        name: eventResponse.data.organizerName,
+                        pp: eventResponse.data.organizerPP,
+                        id: eventResponse.data.idOrganizer,
+                    }
+                    setOrganizer(organizer);
                     setLoading(false);
                 })
                 .catch((error) => {
@@ -166,7 +174,7 @@ const EventDetails = ({route, navigation}) => {
                             </View>
                         </View>
                         <Text style={styles.title}>{event.name}</Text>
-                        <Text>{event.idOrganizer}</Text>
+                        <OrganizersComponent organizer={organizer} />
                         <Text style={{color: COLORS.white, fontSize: 16, marginTop: 10}}>{event.description}</Text>
                         <View style={styles.dateContainer}>
                             <Fontisto name="date" size={30} color={COLORS.orange} />
@@ -253,6 +261,12 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         marginTop: 15,
     },    
+    organizerName: {
+        fontSize: 18,
+        color: COLORS.grey,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
 });
 
 export default EventDetails;
