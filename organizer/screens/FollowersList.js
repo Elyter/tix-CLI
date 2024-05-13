@@ -19,7 +19,7 @@ const FollowersList = ({ route }) => {
     setLoading(true); // Afficher l'indicateur de chargement
     getFollowers(); // Appeler la fonction getFollowers() lors du premier rendu
     setLoading(false); // Masquer l'indicateur de chargement
-  });
+  }, []);
 
   const getFollowers = () => {
     axios.get(API_URL + '/follows/followers/' + userId)

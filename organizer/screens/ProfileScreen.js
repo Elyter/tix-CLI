@@ -71,16 +71,6 @@ const AccountScreen = ({ navigation }) => {
         getData();
     }, []);
 
-    const handleDisconnect = () => {
-        AsyncStorage.removeItem('userData')
-            .then(() => {
-                navigation.navigate('Login');
-            })
-            .catch((error) => {
-                console.error('Error removing user data:', error);
-            });
-    };
-
     const handleFollowersClick = () => {
         navigation.navigate('Followers', {userId: userData.id});
     }
@@ -219,10 +209,6 @@ const AccountScreen = ({ navigation }) => {
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.param}>
                         <Text style={styles.paramText}>Paramètres du compte</Text>
-                        <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.param} onPress={handleDisconnect}>
-                        <Text style={styles.paramText}>Déconnexion</Text>
                         <MaterialIcons name="keyboard-arrow-right" size={24} color="grey" />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.param} onPress={() => navigation.replace('Home')}>
