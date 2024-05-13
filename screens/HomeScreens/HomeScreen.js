@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl } from 'react-native'; // Importez ScrollView
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl, TextInput } from 'react-native'; // Importez ScrollView
 import EventCard from '../../components/EventCard';
 import SearchBar from '../../components/SearchBar';
 import OrganizerCard from '../../components/OrganizerCard'; // Importez le composant OrganizerCard
@@ -17,11 +17,20 @@ const HomeScreen = ({navigation}) => {
     const [organizers, setOrganizers] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
     const [userData, setUserData] = useState({});
+    const [searchText, setSearchText] = useState('');
 
     useEffect(() => {
         getEvents();
         getData();
     }, [])
+
+    const handleSearch = (text) => {
+        setSearchText(text);
+    }
+
+    const handleResearch = () => {
+        navigation.navigate('ResearchNav', { screen: 'Research', params: { searchText: searchText } });
+    }
 
     const getData = async () => {
         try {
@@ -90,7 +99,19 @@ const HomeScreen = ({navigation}) => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.PrincipalTitle}>Tix</Text>
-                <SearchBar style={styles.SearchBar}/>
+                <View style={styles.searchContainer}>
+                    <TextInput
+                        style={{flex: 1, color: COLORS.white}}
+                        placeholder="Recherchez..."
+                        placeholderTextColor={COLORS.grey}
+                        value={searchText}
+                        onChangeText={handleSearch}
+                        keyboardType="default"
+                        inputMode="search"
+                        enterKeyHint="enter"
+                        onSubmitEditing={handleResearch}
+                    />
+                </View>
             </View>
             {/* Section: Organisateurs à suivre */}
             <ScrollView style={styles.container} refreshControl={
@@ -186,6 +207,19 @@ const styles = StyleSheet.create({
         marginLeft: 35,
         marginTop: 55,
         
+    },
+    searchContainer: {
+        backgroundColor: '#363636', // gris foncé
+        borderRadius: 20, // arrondi
+        marginTop: 40, // Déplacer un peu plus bas
+        marginLeft: 120, // Déplacer un peu plus à gauche
+        paddingVertical: 10, // Réduire la hauteur verticale
+        paddingHorizontal: 10,
+        flexDirection: 'row', // aligner les éléments horizontalement
+        justifyContent: 'flex-end', // aligner à droite
+        width: '70%', // prendre 70% de la largeur
+        borderWidth: 1, // Ajouter une bordure
+        borderColor: COLORS.grey, // Couleur de la bordure gris clair
     },
 });
 

@@ -1,17 +1,75 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, Text, TextInput, TouchableWithoutFeedback, Keyboard, } from 'react-native';
 import { COLORS } from '../../assets/colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { API_URL } from '@env';
+import { FlatList } from 'react-native-gesture-handler';
+import EventCard from '../../components/EventCard';
+import { useIsFocused } from '@react-navigation/native';
 
-const ResearchScreen = () => {
+const ResearchScreen = ({ route, navigation }) => {
     const [searchText, setSearchText] = useState('');
     const [isChecked, setIsChecked] = useState(false);
     const [priceAscChecked, setPriceAscChecked] = useState(false);
     const [priceDescChecked, setPriceDescChecked] = useState(false);
     const [dateChecked, setDateChecked] = useState(false);
+    const [userData, setUserData] = useState({});
+    const [events, setEvents] = useState([]);
+    const isFocused = useIsFocused();
+
+
+
+    const getData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('userData');
+            const url = API_URL + '/userData/' + value.replace(/"/g, '')
+            axios.get(url)
+            .then((response) => {
+                setUserData(response.data);
+            });
+        } catch (error) {
+            console.error('Error getting user data:', error);
+        }
+    };
+
+    useEffect(() => {
+        getData();
+        if (route.params?.searchText) {
+            setSearchText(route.params.searchText);
+            handleResearch();
+        }
+        handleResearch();
+        getData();
+    }, [isFocused]);
 
     const handleSearch = (text) => {
         setSearchText(text);
         // Ajoutez ici la logique pour filtrer en fonction du texte de recherche
+    };
+
+    const handleResearch = () => {
+        console.log('Search text:', searchText);
+        url = API_URL + '/events/search/' + searchText;
+        if (priceAscChecked) {
+            url += '/priceAsc';
+        } else if (priceDescChecked) {
+            url += '/priceDesc';
+        } else if (dateChecked) {
+            url += '/dateAsc';
+        } else {
+            url += '/all';
+        }
+        console.log('URL:', url);
+        axios.get(url)
+        .then((response) => {
+            console.log('Search results:', response.data);
+            setEvents(response.data);
+        })
+        .catch((error) => {
+            setEvents([]);
+            console.error('Error searching events:', error);
+        });
     };
 
     const handleCheckboxPress = () => {
@@ -56,7 +114,11 @@ const ResearchScreen = () => {
                             placeholder="Rechercher..."
                             placeholderTextColor={COLORS.grey}
                             value={searchText}
+                            keyboardType="default"
+                            inputMode="search"
+                            enterKeyHint="enter"
                             onChangeText={handleSearch}
+                            onSubmitEditing={handleResearch}
                         />
                     </View>
                     <View style={styles.buttonContainer}>
@@ -80,8 +142,25 @@ const ResearchScreen = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <Text>Mets tous les articles ici : </Text>
-                {/* Ajoutez le reste de votre contenu de recherche ici */}
+                <FlatList
+                    data={events}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity onPress={() => navigation.navigate('HomeNav', { screen: 'EventDetails', params: { id: item.id } })}>
+                            <EventCard
+                                id={item.id}
+                                eventName={item.name}
+                                date={item.date}
+                                location={item.location}
+                                imageUrl={item.imageUrl}
+                                price={item.price}
+                                organizer={item.organizerName}
+                            />
+                        </TouchableOpacity>
+                    )}
+                    showsVerticalScrollIndicator={false}
+                    style={{ width: '100%' }}
+                />
             </View>
         </TouchableWithoutFeedback>
     );

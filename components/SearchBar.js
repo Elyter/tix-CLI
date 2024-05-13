@@ -2,14 +2,19 @@
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 import { COLORS } from '../assets/colors';
+import { useNavigation } from '@react-navigation/native';
 
-const SearchBar = () => {
+const SearchBar = ({navigation}) => {
     const [searchText, setSearchText] = useState('');
 
     const handleSearch = (text) => {
         // Mettre en œuvre la logique de recherche ici
         setSearchText(text);
     };
+
+    const handleResearch = () => {
+        navigation.navigate('ResearchNav', { screen: 'ResearchScreen', params: { searchText: searchText } });
+    }
 
     return (
         <View style={styles.container}>
@@ -19,6 +24,10 @@ const SearchBar = () => {
                 placeholderTextColor={COLORS.grey}
                 value={searchText}
                 onChangeText={handleSearch}
+                keyboardType="default"
+                inputMode="search"
+                enterKeyHint="enter"
+                onSubmitEditing={handleResearch}
             />
         </View>
     );
