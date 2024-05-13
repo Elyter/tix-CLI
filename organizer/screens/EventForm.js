@@ -93,17 +93,17 @@ const EventForm = () => {
 
   const incrementPhases = () => setNumPhases(prevNum => prevNum < 5 ? prevNum + 1 : prevNum);
 
-  const handleSubmit = () => {
-    console.log('Answers:', answers);
-    axios.post(API_URL + '/events', {
-      name: answers[0],
-      date: selectedDate,
-      location: answers[2],
-      price: answers[4],
-      description: answers[7],
-      idOrganizer: userData.id,
-    })
-    .then((response) => {
+  const handleSubmit = async () => {
+    try {
+      const eventResponse = await axios.post(API_URL + '/events', {
+        name: answers[0],
+        date: selectedDate,
+        location: answers[2],
+        price: 1,
+        description: answers[7],
+        idOrganizer: userData.id,
+      });
+
       console.log('Réponses soumises :', answers);
       setAnswers(['', '', '', '', '', '', '', '']);
       setCurrentQuestionIndex(0);
@@ -111,7 +111,35 @@ const EventForm = () => {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
       navigation.navigate('MyEvents');
-    })
+
+      // Upload image if selected
+      if (selectedImage) {
+        console.log('Uploading image...');
+        const eventId = eventResponse.data.eventId;
+        const formData = new FormData();
+        formData.append('image', {
+          uri: selectedImage,
+          type: 'image/jpeg',
+          name: `${eventId}`,
+        });
+
+        await axios.post(API_URL + `/images/events/`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then((response) => {
+          console.log('Image uploaded:', response.data);
+        })
+        .catch((error) => {
+          console.error('Error uploading image:', error);
+        });
+
+      } else {
+      }
+    } catch (error) {
+      console.error('Error submitting event:', error);
+    }
   };
 
   const pickImage = async () => {
@@ -122,35 +150,8 @@ const EventForm = () => {
         quality: 1,
     });
 
-    if (result.assets !== null) {
-
+    if (!result.cancelled) {
       setSelectedImage(result.assets[0].uri);
-    //   const formData = new FormData();
-    //   // Get the file name without extension
-
-    //   setFileName(Math.random().toString(36).substring(7));
-    //   formData.append('image', {
-    //       uri: result.assets[0].uri,
-    //       type: 'image/jpeg', // or whatever your image type is
-    //       name: fileName, // Ensure file name has extension
-    //   });
-
-    //   console.log('File name:', fileName);
-    //   console.log('File uri:', result.assets[0].uri);
-
-    //   axios.post(API_URL + '/images/events', formData, {
-    //       headers: {
-    //           'Content-Type': 'multipart/form-data',
-    //           // Add any additional headers here
-    //       },
-    //   })
-    //   .then((response) => {
-    //       console.log('Image uploaded:', response.data);
-    //       setSelectedImage(API_URL + "/images/users/"+  userData.pp)
-    //   })
-    //   .catch((error) => {
-    //       console.error('Error uploading image:', error);
-    //   });
     }
   };
 
