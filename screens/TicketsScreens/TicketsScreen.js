@@ -201,7 +201,7 @@ const PastTicketsScreen = ({ navigation }) => {
                       eventName={item.name}
                       date={item.date}
                       location={item.location}
-                      imageUrl={"/images/events/" + item.id + ".jpeg"}
+                      imageUrl={item.imageUrl}
                       price={item.price}
                       organizer={item.idOrganizer}
                   />
