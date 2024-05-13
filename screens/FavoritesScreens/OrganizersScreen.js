@@ -7,14 +7,10 @@ import axios from 'axios';
 import { API_URL } from '@env';
 import { useIsFocused } from '@react-navigation/native';
 
-// Exemple de données d'organisateurs
-const organizersData = [
-
-];
 
 const OrganizersScreen = () => {
     // Définir l'état des organisateurs
-    const [organizers, setOrganizers] = useState(organizersData);
+    const [organizers, setOrganizers] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(false);
     const [userData, setUserData] = useState();
@@ -74,8 +70,6 @@ const OrganizersScreen = () => {
                     renderItem={({ item }) => (
                         <OrganizersComponent
                             organizer={item}
-                            isFollowing={!item.isFollowing}
-                            onFollowToggle={() => handleFollowToggle(item.id)}
                         />
                     )}
                     keyExtractor={item => item.id.toString()}

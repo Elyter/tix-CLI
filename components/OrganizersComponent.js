@@ -27,6 +27,7 @@ const OrganizersComponent = ({ organizer }) => {
                     console.log('Follows:', response.data);
                     for (let i = 0; i < response.data.length; i++) {
                         if (response.data[i].id === organizer.id) {
+                            console.log('Following:', response.data[i].id);
                             setIsFollowing(true);
                         }
                     }
