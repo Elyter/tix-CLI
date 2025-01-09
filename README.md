@@ -1,40 +1,44 @@
-# TIX - Plateforme de Billetterie Mobile
+<div align="center">
+  <img src="assets/logo.png" alt="TIX Logo" width="200"/>
+  <h1>TIX</h1>
+  <p>La billetterie événementielle nouvelle génération</p>
+  
+  [![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
+  [![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/)
+  [![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)](https://firebase.google.com/)
+</div>
 
-## À propos
+## 🚀 Vision
 
-TIX est une application mobile innovante de billetterie qui connecte les organisateurs d'événements avec leur public. Développée avec React Native et Expo, elle offre une expérience utilisateur fluide pour découvrir, suivre et acheter des billets pour divers événements.
+TIX révolutionne l'expérience de la billetterie mobile en connectant organisateurs et participants d'une manière intuitive et efficace. Notre application offre une plateforme tout-en-un pour découvrir, organiser et participer à des événements.
 
-## Fonctionnalités Principales
+## ✨ Caractéristiques
 
-### Pour les Utilisateurs
-- Découverte d'événements avec recherche avancée
-- Système de favoris pour suivre les événements et organisateurs
-- Gestion de billets (passés et à venir)
-- Personnalisation du profil utilisateur
-- Système de localisation pour événements à proximité
+### 📱 Interface Utilisateur
+- **Découverte Intuitive** - Explorez les événements avec une recherche intelligente
+- **Favoris & Suivi** - Gardez un œil sur vos événements et organisateurs préférés
+- **Gestion de Billets** - Tous vos billets au même endroit
+- **Localisation** - Trouvez les événements près de chez vous
 
-### Pour les Organisateurs
-- Interface dédiée de gestion d'événements
-- Création et modification d'événements
-- Gestion de profil organisateur
-- Communication avec les participants
+### 🎯 Côté Organisateur
+- **Dashboard Complet** - Gérez vos événements efficacement
+- **Analytics** - Suivez vos performances en temps réel
+- **Personnalisation** - Créez votre identité unique
 
-## Stack Technique
+## 🛠 Technologies
 
-### Frontend
-- React Native
-- Expo Framework
-- React Navigation
-- Axios pour les requêtes HTTP
-- AsyncStorage pour le stockage local
+<div align="center">
 
-### Backend
-- Node.js avec Express
-- Base de données PostgreSQL
-- Authentication Firebase
-- Stockage de fichiers AWS S3
+| Frontend | Backend | Outils |
+|----------|---------|---------|
+| React Native | Node.js | Git |
+| Expo | Express | VS Code |
+| React Navigation | PostgreSQL | Postman |
+| AsyncStorage | Firebase | Figma |
 
-## Installation
+</div>
+
+## 🏁 Démarrage Rapide
 
 1. **Prérequis**
 2. Clonez ce dépôt sur votre machine locale.
