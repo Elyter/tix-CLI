@@ -26,7 +26,7 @@ Insérez ici quelques captures d'écran de votre application pour donner aux uti
 1. Clonez ce dépôt sur votre machine locale.
 2. Exécutez `npm install` pour installer toutes les dépendances.
 3. Configurez les clés API nécessaires pour Firebase dans le fichier de configuration `.env` à la racine du projet.
-4. Exécutez `expo start` pour lancer l'application dans le simulateur ou sur un appareil connecté.
+4. Exécutez `npx expo start` pour lancer l'application dans le simulateur ou sur un appareil connecté.
 
 ## Auteurs
 
